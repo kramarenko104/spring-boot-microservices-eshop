@@ -1,0 +1,13 @@
+CREATE DATABASE IF NOT EXISTS eshopdb CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE eshopdb;
+
+CREATE TABLE IF NOT EXISTS products
+(
+	productId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(100) NOT NULL UNIQUE,
+	category int NOT NULL,
+	price int NOT NULL,
+	description VARCHAR(300),
+	image VARCHAR(100)
+)
+ENGINE = InnoDB;
