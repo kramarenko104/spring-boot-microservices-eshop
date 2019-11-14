@@ -3,7 +3,7 @@ Spring Boot + Spring Cloud App
 
 - Spring Boot 2.2.1
 - Spring Data JPA
-- Spring Cloud (Eureka, Hystrix)
+- Spring Cloud Netflix (Eureka, Hystrix)
 - MySQL Server 5.7.23 
 - HikariCP 3.1.0
 - Lombok 1.16.22
