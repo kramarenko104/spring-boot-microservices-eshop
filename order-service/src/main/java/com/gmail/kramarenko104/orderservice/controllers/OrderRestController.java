@@ -37,7 +37,6 @@ public class OrderRestController {
         return new ResponseEntity<>(orderRepo.getAll(userId), HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}")
     public HttpEntity<Order> getLastOrder(@PathVariable("userId") long userId) {
         Order order = orderRepo.getLastOrderByUserId(userId);
         if (order != null) {

@@ -8,7 +8,8 @@ spring:
   config:
    server:
     git:
-     uri: https://github.com/kramarenko104/spring-boot-microservices-eshop/configs.git
+#     uri: https://github.com/kramarenko104/spring-boot-microservices-eshop/configs
+     uri: https://github.com/juli127/ConfigData.git
    enabled:  false
 
 logging:
