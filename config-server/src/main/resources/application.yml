@@ -1,13 +1,21 @@
+server:
+ port: 8888
+
 spring:
-#  profiles:
-#      active: native
-  cloud:
-    config:
-      enabled:  false
-      server:
-        git:
-          uri:  https://github.com/juli127/ConfigData
-        #          basedir: target/shared
-#        native:
-#          search-locations: classpath:/shared
-#        bootstrap:  true
+ application:
+  name: config-server
+ cloud:
+  config:
+   server:
+    git:
+     uri: https://github.com/kramarenko104/spring-boot-microservices-eshop/configs.git
+   enabled:  false
+
+logging:
+ level:
+  comnetflix.discovery: 'OFF'
+  org.springframework.cloud: 'DEBUG'
+
+# For File System:
+# spring.profiles.active=native
+# spring.cloud.config.server.native.searchLocations=classpath:/shared
