@@ -1,0 +1,13 @@
+spring:
+#  profiles:
+#      active: native
+  cloud:
+    config:
+      enabled:  false
+      server:
+        git:
+          uri:  https://github.com/juli127/ConfigData
+        #          basedir: target/shared
+#        native:
+#          search-locations: classpath:/shared
+#        bootstrap:  true

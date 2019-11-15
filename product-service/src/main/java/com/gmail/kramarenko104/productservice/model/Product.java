@@ -7,7 +7,6 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import org.springframework.hateoas.RepresentationModel;
 
 @Entity
 @NoArgsConstructor
@@ -15,7 +14,7 @@ import org.springframework.hateoas.RepresentationModel;
 @EqualsAndHashCode
 @Table(name = "products")
 @Access(value=AccessType.FIELD)
-public class Product extends RepresentationModel implements Serializable {
+public class Product implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,0 +1,12 @@
+server:
+  port: 8861
+
+logging:
+  level:
+    com.netflix.discovery: 'OFF'
+    org.springframework.cloud: 'DEBUG'
+
+spring:
+  application:
+    name: config-server
+

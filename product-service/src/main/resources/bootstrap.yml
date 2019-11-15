@@ -1,0 +1,13 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: product-service
+  cloud:
+    config:
+      enabled:  true
+      uri: http://localhost:8861
+      fail-fast: true
+
+
