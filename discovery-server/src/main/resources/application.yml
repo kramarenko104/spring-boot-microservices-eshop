@@ -1,11 +1,11 @@
-spring:
-  profiles: default
-
-eureka:
-  client:
-    register-with-eureka: false
-    fetch-registry: false
-
 server:
   port: 8761
 
+eureka:
+  client:
+#    we use now only one Eureka server for testing
+    register-with-eureka: false
+    fetch-registry: false
+
+spring:
+  profiles: default
