@@ -7,14 +7,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public class OrderRepoImpl extends BaseRepoImpl<Order> implements OrderRepo {
+public class OrderRepoImpl implements OrderRepo {
 
     private final static Logger logger = LoggerFactory.getLogger(OrderRepoImpl.class);
 
@@ -68,13 +66,31 @@ public class OrderRepoImpl extends BaseRepoImpl<Order> implements OrderRepo {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW,
-            isolation = Isolation.READ_COMMITTED,
-            rollbackFor = Exception.class)
     public void deleteAllOrdersForUser(long userId) {
         TypedQuery<Order> query = em.createNamedQuery("GET_ALL_ORDERS_BY_USERID", Order.class)
                 .setParameter("userId", userId);
         List<Order> ordersToRemove = query.getResultList();
         ordersToRemove.stream().forEach(order -> em.remove(order));
+    }
+
+    @Override
+    public Order update(Order newOrder) {
+        return em.merge(newOrder);
+    }
+
+    @Override
+    public void delete(long orderId) {
+        try {
+            Order order = Optional.ofNullable(em.find(Order.class, orderId))
+                    .orElseThrow(() -> new EntityNotFoundException("Not found Order instance for id=" + orderId));
+            em.remove(order);
+        } catch (EntityNotFoundException ex) {
+            logger.debug(ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<Order> getAll() {
+        return em.createQuery("from Order o").getResultList();
     }
 }

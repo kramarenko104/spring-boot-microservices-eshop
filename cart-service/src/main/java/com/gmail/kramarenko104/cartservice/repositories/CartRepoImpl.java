@@ -9,20 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class CartRepoImpl extends BaseRepoImpl<Cart> implements CartRepo {
+public class CartRepoImpl implements CartRepo {
 
     private final static Logger logger = LoggerFactory.getLogger(CartRepoImpl.class);
 
@@ -33,9 +27,6 @@ public class CartRepoImpl extends BaseRepoImpl<Cart> implements CartRepo {
     private RestTemplate restTemplate;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW,
-            isolation = Isolation.READ_COMMITTED,
-            rollbackFor = Exception.class)
     public Cart createCart(long userId) {
         Cart cart = null;
         try {
@@ -81,8 +72,6 @@ public class CartRepoImpl extends BaseRepoImpl<Cart> implements CartRepo {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW,
-            isolation = Isolation.READ_COMMITTED)
     public void clearCartByUserId(long userId) {
         try {
             Cart cartToClear = Optional.ofNullable(getCartByUserId(userId))
@@ -100,9 +89,6 @@ public class CartRepoImpl extends BaseRepoImpl<Cart> implements CartRepo {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW,
-            isolation = Isolation.READ_COMMITTED,
-            rollbackFor = Exception.class)
     public void addProduct(long userId,
                            Product product,
                            int addQuantity) {
@@ -123,9 +109,6 @@ public class CartRepoImpl extends BaseRepoImpl<Cart> implements CartRepo {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW,
-            isolation = Isolation.READ_COMMITTED,
-            rollbackFor = Exception.class)
     public void removeProduct(long userId,
                               Product product,
                               int rmQuantity) {
@@ -159,4 +142,19 @@ public class CartRepoImpl extends BaseRepoImpl<Cart> implements CartRepo {
             logger.debug("[eshop] CartRepoImpl.deleteProduct: " + ex.getMessage());
         }
     }
+
+    public Cart update(Cart newCart) {
+        return em.merge(newCart);
+    }
+
+    public void delete(long cartId) {
+        try {
+            Cart cart = Optional.ofNullable(em.find(Cart.class, cartId))
+                    .orElseThrow(() -> new EntityNotFoundException("Not found instance of Cart for id=" + cartId));
+            em.remove(cart);
+        } catch (EntityNotFoundException ex) {
+            logger.debug(ex.getMessage());
+        }
+    }
+
 }

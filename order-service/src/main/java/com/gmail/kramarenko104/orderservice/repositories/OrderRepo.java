@@ -14,4 +14,9 @@ public interface OrderRepo {
 
     Order getLastOrderByUserId(long userId);
 
+    Order update(Order newOrder);
+
+    void delete(long orderId);
+
+    List<Order> getAll();
 }
