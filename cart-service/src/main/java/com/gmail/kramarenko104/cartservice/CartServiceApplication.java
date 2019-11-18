@@ -6,7 +6,6 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -21,18 +20,15 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class CartServiceApplication {
 
-	@Bean
-    @LoadBalanced
-	public RestTemplate getRestTemplate() {
-		HttpComponentsClientHttpRequestFactory httpRequestFactory =
-				new HttpComponentsClientHttpRequestFactory();
-		httpRequestFactory.setConnectTimeout(3000);
-		return new RestTemplate(httpRequestFactory);
-	}
-
 	public static void main(String[] args) {
 		SpringApplication.run(CartServiceApplication.class, args);
 	}
+
+    @Bean
+    @LoadBalanced
+    public RestTemplate getRestTemplate() {
+        return new RestTemplate();
+    }
 
 	@Bean
 	public Docket swaggerApi() {
@@ -43,6 +39,5 @@ public class CartServiceApplication {
 				.build()
 				.apiInfo(new ApiInfoBuilder().version("1.0").title("Employee API").description("Documentation Employee API v1.0").build());
 	}
-
 
 }

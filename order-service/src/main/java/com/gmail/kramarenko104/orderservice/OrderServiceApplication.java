@@ -21,18 +21,15 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class OrderServiceApplication {
 
-	@Bean
-    @LoadBalanced
-	public RestTemplate getRestTemplate() {
-		HttpComponentsClientHttpRequestFactory httpRequestFactory =
-				new HttpComponentsClientHttpRequestFactory();
-		httpRequestFactory.setConnectTimeout(3000);
-		return new RestTemplate(httpRequestFactory);
-	}
-
 	public static void main(String[] args) {
 		SpringApplication.run(OrderServiceApplication.class, args);
 	}
+
+    @Bean
+    @LoadBalanced
+    public RestTemplate getRestTemplate() {
+        return new RestTemplate();
+    }
 
 	@Bean
 	public Docket swaggerApi() {

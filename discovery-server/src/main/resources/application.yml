@@ -3,9 +3,6 @@ server:
 
 eureka:
   client:
-#    we use now only one Eureka server for testing
+#   use only one Eureka server for now
     register-with-eureka: false
     fetch-registry: false
-
-spring:
-  profiles: default
