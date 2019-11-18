@@ -12,7 +12,7 @@ public interface OrderService {
 
     Order createOrder(long userId, Map<Product, Integer> products);
 
-    List<Order> getAll();
+    List<Order> getAllOrdersByUserId(long userId);
 
     Order getLastOrderByUserId(long userId);
 }

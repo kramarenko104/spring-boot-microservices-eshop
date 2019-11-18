@@ -4,8 +4,12 @@ import com.gmail.kramarenko104.orderservice.model.Order;
 import com.gmail.kramarenko104.orderservice.model.Product;
 import com.gmail.kramarenko104.orderservice.model.User;
 import com.gmail.kramarenko104.orderservice.repositories.OrderRepoImpl;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +30,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @HystrixCommand(fallbackMethod = "fallbackOrder")
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+            isolation = Isolation.READ_COMMITTED,
+            rollbackFor = Exception.class)
     public Order createOrder(long userId, Map<Product, Integer> products) {
         long newOrderNumber = orderRepo.getNewOrderNumber();
         // createProduct the new order on the base of Cart
@@ -45,9 +53,15 @@ public class OrderServiceImpl implements OrderService {
         return orderRepo.createOrder(newOrder);
     }
 
+    public Order fallbackOrder(long userId, Map<Product, Integer> products) {
+        Order order = new Order();
+        order.setStatus("NOT_CREATED");
+        return order;
+    }
+
     @Override
-    public List<Order> getAll() {
-        return orderRepo.getAll();
+    public List<Order> getAllOrdersByUserId(long userId) {
+        return orderRepo.getAllOrdersByUserId(userId);
     }
 
     @Override

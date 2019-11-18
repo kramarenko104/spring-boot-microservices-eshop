@@ -20,9 +20,6 @@ public class OrderRepoImpl implements OrderRepo {
     private EntityManager em;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW,
-            isolation = Isolation.READ_COMMITTED,
-            rollbackFor = Exception.class)
     public Order createOrder(Order order) {
         Order newOrder = null;
         order.setUser(em.merge(order.getUser()));
@@ -66,6 +63,9 @@ public class OrderRepoImpl implements OrderRepo {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+            isolation = Isolation.READ_COMMITTED,
+            rollbackFor = Exception.class)
     public void deleteAllOrdersForUser(long userId) {
         TypedQuery<Order> query = em.createNamedQuery("GET_ALL_ORDERS_BY_USERID", Order.class)
                 .setParameter("userId", userId);
@@ -74,11 +74,17 @@ public class OrderRepoImpl implements OrderRepo {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+            isolation = Isolation.READ_COMMITTED,
+            rollbackFor = Exception.class)
     public Order update(Order newOrder) {
         return em.merge(newOrder);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+            isolation = Isolation.READ_COMMITTED,
+            rollbackFor = Exception.class)
     public void delete(long orderId) {
         try {
             Order order = Optional.ofNullable(em.find(Order.class, orderId))
@@ -87,10 +93,5 @@ public class OrderRepoImpl implements OrderRepo {
         } catch (EntityNotFoundException ex) {
             logger.debug(ex.getMessage());
         }
-    }
-
-    @Override
-    public List<Order> getAll() {
-        return em.createQuery("from Order o").getResultList();
     }
 }

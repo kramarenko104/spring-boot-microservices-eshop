@@ -76,23 +76,4 @@ public class CartRestController {
         logger.warn("Some problems knocking to microservice 'product-service'. Try a bit later.");
         return HttpStatus.EXPECTATION_FAILED;
     }
-
-    protected static Cart recalculateCart(Cart cart) {
-        Map<Product, Integer> productsInCart = cart.getProducts();
-        int itemsCount = 0;
-        int totalSum = 0;
-        if (productsInCart.size() > 0) {
-            int quantity = 0;
-            for (Map.Entry<Product, Integer> entry : productsInCart.entrySet()) {
-                quantity = entry.getValue();
-                itemsCount += quantity;
-                totalSum += quantity * entry.getKey().getPrice();
-            }
-        }
-        if (itemsCount > 0) {
-            cart.setItemsCount(itemsCount);
-            cart.setTotalSum(totalSum);
-        }
-        return cart;
-    }
 }

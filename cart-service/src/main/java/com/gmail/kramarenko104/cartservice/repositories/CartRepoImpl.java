@@ -5,10 +5,14 @@ import com.gmail.kramarenko104.cartservice.exceptions.UserNotFoundException;
 import com.gmail.kramarenko104.cartservice.model.Cart;
 import com.gmail.kramarenko104.cartservice.model.Product;
 import com.gmail.kramarenko104.cartservice.model.User;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -27,6 +31,10 @@ public class CartRepoImpl implements CartRepo {
     private RestTemplate restTemplate;
 
     @Override
+    @HystrixCommand(fallbackMethod = "defaultCart")
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+            isolation = Isolation.READ_COMMITTED,
+            rollbackFor = Exception.class)
     public Cart createCart(long userId) {
         Cart cart = null;
         try {
@@ -58,6 +66,7 @@ public class CartRepoImpl implements CartRepo {
     }
 
     @Override
+    @HystrixCommand(fallbackMethod = "defaultCart")
     public Cart getCartByUserId(long userId) {
         Cart cart = null;
         try {
@@ -72,6 +81,10 @@ public class CartRepoImpl implements CartRepo {
     }
 
     @Override
+    @HystrixCommand(fallbackMethod = "defaultCart")
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+            isolation = Isolation.READ_COMMITTED,
+            rollbackFor = Exception.class)
     public void clearCartByUserId(long userId) {
         try {
             Cart cartToClear = Optional.ofNullable(getCartByUserId(userId))
@@ -88,7 +101,14 @@ public class CartRepoImpl implements CartRepo {
         }
     }
 
+    public Cart defaultCart(long userId) {
+        return new Cart();
+    }
+
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+            isolation = Isolation.READ_COMMITTED,
+            rollbackFor = Exception.class)
     public void addProduct(long userId,
                            Product product,
                            int addQuantity) {
@@ -109,6 +129,9 @@ public class CartRepoImpl implements CartRepo {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+            isolation = Isolation.READ_COMMITTED,
+            rollbackFor = Exception.class)
     public void removeProduct(long userId,
                               Product product,
                               int rmQuantity) {
@@ -143,10 +166,18 @@ public class CartRepoImpl implements CartRepo {
         }
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+            isolation = Isolation.READ_COMMITTED,
+            rollbackFor = Exception.class)
     public Cart update(Cart newCart) {
         return em.merge(newCart);
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+            isolation = Isolation.READ_COMMITTED,
+            rollbackFor = Exception.class)
     public void delete(long cartId) {
         try {
             Cart cart = Optional.ofNullable(em.find(Cart.class, cartId))
