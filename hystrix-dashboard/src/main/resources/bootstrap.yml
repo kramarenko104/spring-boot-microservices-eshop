@@ -3,4 +3,30 @@ server:
 
 spring:
   application:
-    name: hystrix-dashboard
+    name: hystrix-turbine
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+turbine:
+  appConfig: cart-service,order-service
+  clusterNameExpression: new String('default')
+  instanceUrlSuffix:
+    default: actuator/hystrix.stream
+  combineHostPort: true
+  aggregator:
+    clusterConfig: default
+
+management:
+  endpoint:
+    health:
+      enabled: true
+      showDetails: always
+    web:
+      exposure:
+        include: hystrix.stream
+      basePath: /actuator
+      core:
+        allowedOrigins: true
