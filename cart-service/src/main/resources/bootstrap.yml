@@ -1,3 +1,8 @@
+#server.port= 8084
+#spring.application.name= cart-service
+#eureka.client.serviceUrl.defaultZone= http://localhost:8761/eureka/
+#management.endpoints.web.exposure.include= hystrix.stream
+
 server:
   port: 8084
 
@@ -9,3 +14,13 @@ spring:
       enabled:  true
       uri: http://localhost:8888
       fail-fast: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream, info, health
+      base-path: /
+
+
+

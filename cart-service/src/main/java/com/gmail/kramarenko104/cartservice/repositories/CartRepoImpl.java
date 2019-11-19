@@ -9,6 +9,7 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -105,7 +106,14 @@ public class CartRepoImpl implements CartRepo {
         return new Cart();
     }
 
+    private void fallbackProcessor(long userId,
+                                         long productId,
+                                         int quantity) {
+        logger.debug("[eshop] CartRepoImpl.fallbackProcessor: some problems with access to cart");
+    }
+
     @Override
+    @HystrixCommand(fallbackMethod = "fallbackProcessor")
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             isolation = Isolation.READ_COMMITTED,
             rollbackFor = Exception.class)
@@ -129,6 +137,7 @@ public class CartRepoImpl implements CartRepo {
     }
 
     @Override
+    @HystrixCommand(fallbackMethod = "fallbackProcessor")
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             isolation = Isolation.READ_COMMITTED,
             rollbackFor = Exception.class)

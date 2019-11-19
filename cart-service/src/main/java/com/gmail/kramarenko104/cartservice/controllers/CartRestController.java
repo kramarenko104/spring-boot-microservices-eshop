@@ -1,9 +1,7 @@
 package com.gmail.kramarenko104.cartservice.controllers;
 
 import com.gmail.kramarenko104.cartservice.model.Cart;
-import com.gmail.kramarenko104.cartservice.model.Product;
 import com.gmail.kramarenko104.cartservice.services.CartServiceImpl;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +9,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/cart")
@@ -39,7 +35,6 @@ public class CartRestController {
         return new ResponseEntity<>(cart, HttpStatus.OK);
     }
 
-    @HystrixCommand(fallbackMethod = "fallbackProcessor")
     @PostMapping(value = "/users/{userId}/products/{productId}", params = {"quantity"})
     public HttpStatus addProduct(@PathVariable("userId") long userId,
                            @PathVariable("productId") long productId,
@@ -48,7 +43,6 @@ public class CartRestController {
          return HttpStatus.CREATED;
     }
 
-    @HystrixCommand(fallbackMethod = "fallbackProcessor")
     @DeleteMapping(value = "/users/{userId}/products/{productId}", params = {"quantity"})
     public HttpStatus removeProduct(@PathVariable("userId") long userId,
                               @PathVariable("productId") long productId,
@@ -70,10 +64,4 @@ public class CartRestController {
         return new ResponseEntity<>(newCart, HttpStatus.CREATED);
     }
 
-    private HttpStatus fallbackProcessor(long userId,
-                                   long productId,
-                                   int quantity) {
-        logger.warn("Some problems knocking to microservice 'product-service'. Try a bit later.");
-        return HttpStatus.EXPECTATION_FAILED;
-    }
 }
