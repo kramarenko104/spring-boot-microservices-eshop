@@ -9,6 +9,7 @@ server:
 spring:
   application:
     name: cart-service
+
   cloud:
     config:
       enabled:  true
@@ -19,8 +20,8 @@ management:
   endpoints:
     web:
       exposure:
-        include: hystrix.stream, info, health
-      base-path: /
+        include: hystrix.stream, info, health, hystrixstream
+        base-path: /
 
 
 

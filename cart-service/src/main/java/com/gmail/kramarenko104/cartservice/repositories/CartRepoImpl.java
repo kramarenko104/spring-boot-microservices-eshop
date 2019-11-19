@@ -5,11 +5,9 @@ import com.gmail.kramarenko104.cartservice.exceptions.UserNotFoundException;
 import com.gmail.kramarenko104.cartservice.model.Cart;
 import com.gmail.kramarenko104.cartservice.model.Product;
 import com.gmail.kramarenko104.cartservice.model.User;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -32,7 +30,6 @@ public class CartRepoImpl implements CartRepo {
     private RestTemplate restTemplate;
 
     @Override
-    @HystrixCommand(fallbackMethod = "defaultCart")
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             isolation = Isolation.READ_COMMITTED,
             rollbackFor = Exception.class)
@@ -67,7 +64,6 @@ public class CartRepoImpl implements CartRepo {
     }
 
     @Override
-    @HystrixCommand(fallbackMethod = "defaultCart")
     public Cart getCartByUserId(long userId) {
         Cart cart = null;
         try {
@@ -82,10 +78,8 @@ public class CartRepoImpl implements CartRepo {
     }
 
     @Override
-    @HystrixCommand(fallbackMethod = "defaultCart")
     @Transactional(propagation = Propagation.REQUIRES_NEW,
-            isolation = Isolation.READ_COMMITTED,
-            rollbackFor = Exception.class)
+            isolation = Isolation.READ_COMMITTED)
     public void clearCartByUserId(long userId) {
         try {
             Cart cartToClear = Optional.ofNullable(getCartByUserId(userId))
@@ -102,18 +96,7 @@ public class CartRepoImpl implements CartRepo {
         }
     }
 
-    public Cart defaultCart(long userId) {
-        return new Cart();
-    }
-
-    private void fallbackProcessor(long userId,
-                                         long productId,
-                                         int quantity) {
-        logger.debug("[eshop] CartRepoImpl.fallbackProcessor: some problems with access to cart");
-    }
-
     @Override
-    @HystrixCommand(fallbackMethod = "fallbackProcessor")
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             isolation = Isolation.READ_COMMITTED,
             rollbackFor = Exception.class)
@@ -137,7 +120,6 @@ public class CartRepoImpl implements CartRepo {
     }
 
     @Override
-    @HystrixCommand(fallbackMethod = "fallbackProcessor")
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             isolation = Isolation.READ_COMMITTED,
             rollbackFor = Exception.class)
