@@ -2,7 +2,7 @@
 Spring Boot + Spring Cloud App
 - Spring Boot 2.2.1
 - Spring Data JPA
-- Spring Cloud Netflix (Eureka, Hystrix, Config server, Ribbon)
+- Spring Cloud Netflix (Eureka, Hystrix, Config server, Ribbon, Turbine dashboard)
 - Swagger2 documentation API
 - MySQL Server 5.7.23 
 - HikariCP 3.1.0
@@ -16,6 +16,7 @@ Spring Boot + Spring Cloud App
 - 4 Domain microservices: user-service, product-service, cart-service, order-service
 - discover-servise is Eureka server (port 8761)
 - config-server (port 8888) loads application profiles from gitHub resource
+- Turbine dashboard runs on port 7777. Run it: http://localhost:7777/hystrix => http://localhost:7777/turbine.stream?cluster=default
 - Hystrix, LoadBalancer are enabled for cart-service, order-service that call other microservices
 - REST requests for cart-service:
 - - add {quantity} of product with {productId} to cart for user with {userId}:
