@@ -4,6 +4,7 @@ import com.gmail.kramarenko104.productservice.model.Product;
 import com.gmail.kramarenko104.productservice.services.ProductServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,9 @@ public class ProductRestController {
     @Autowired
     ProductServiceImpl productService;
 
+    @Autowired
+    private Environment env;
+
     public ProductRestController() {
     }
 
@@ -30,6 +34,7 @@ public class ProductRestController {
 
     @GetMapping("/{productId}")
     public HttpEntity<Product> getProduct(@PathVariable("productId") long productId) {
+        logger.debug("[eshop] Product-Service running at port: " + env.getProperty("local.server.port"));
         return new ResponseEntity<>(productService.get(productId),  HttpStatus.OK);
     }
 
