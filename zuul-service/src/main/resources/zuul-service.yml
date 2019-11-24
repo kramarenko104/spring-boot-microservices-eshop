@@ -1,0 +1,31 @@
+zuul:
+  # A prefix that can added to beginning of all requests.
+  prefix: /eshop
+  # Disable accessing services using service name (i.e. cart-service).
+  # They should be only accessed through the path defined below.
+  ignoredServices: '*'
+  routes:
+    users:
+      path: /users/**
+      sensitiveHeaders:
+      serviceId: user-service
+    products:
+      path: /produts/**
+      sensitiveHeaders:
+      serviceId: product-service
+    cart:
+      path: /cart/**
+      sensitiveHeaders:
+      serviceId: cart-service
+    orders:
+      path: /orders/**
+      sensitiveHeaders:
+      serviceId: order-service
+
+#ribbon:
+#  eureka:
+#    enabled: false
+
+#users:
+#  ribbon:
+#    listOfServers: cart-service, product-service, order-service, user-service
