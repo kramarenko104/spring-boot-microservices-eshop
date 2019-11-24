@@ -47,13 +47,13 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void addProduct(long userId, long productId, int quantity) {
-        Product productToAdd = restTemplate.getForObject("http://product-service/products/" + productId, Product.class);
+        Product productToAdd = restTemplate.getForObject("http://product-service/products/api/" + productId, Product.class);
         cartRepo.addProduct(userId, productToAdd, quantity);
     }
 
     @Override
     public void removeProduct(long userId, long productId, int quantity) {
-        Product productToRemove = restTemplate.getForObject("http://product-service/products/" + productId, Product.class);
+        Product productToRemove = restTemplate.getForObject("http://product-service/products/api/" + productId, Product.class);
         cartRepo.removeProduct(userId, productToRemove, quantity);
     }
 

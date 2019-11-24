@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -14,6 +15,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @Table(name = "products")
 @Access(value=AccessType.FIELD)
+@NamedQuery(name="Product.getProductsByCategory", query = "select p from Product p where p.category=:category")
 public class Product implements Serializable {
 
     @Id
@@ -38,6 +40,6 @@ public class Product implements Serializable {
 
     @Override
     public String toString() {
-        return "{\"product_id\":" + product_id + ",\"name\":\"" + name + "\",\"price\":" + price + "}";
+        return "{product_id:" + product_id + ",name:" + name + ",price:" + price + "}";
     }
 }

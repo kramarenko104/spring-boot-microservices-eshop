@@ -38,8 +38,8 @@ public class OrderServiceImpl implements OrderService {
         long newOrderNumber = orderRepo.getNewOrderNumber();
         // createProduct the new order on the base of Cart
         Order newOrder = new Order();
-        newOrder.setUser(restTemplate.getForObject("http://user-service/user/" + userId, User.class));
-        newOrder.setOrderNumber(newOrderNumber);
+        newOrder.setUser(restTemplate.getForObject("http://user-service/users/api/" + userId, User.class));
+        newOrder.setOrder_number(newOrderNumber);
         newOrder.setProducts(products);
         newOrder.setStatus(PROCESSED_ORDER);
         int totalSum = 0;
@@ -71,6 +71,11 @@ public class OrderServiceImpl implements OrderService {
             order = recalculateOrder(order);
         }
         return order;
+    }
+
+    @Override
+    public List<Order> getAllOrders() {
+        return orderRepo.getAllOrders();
     }
 
     private Order recalculateOrder(Order order) {

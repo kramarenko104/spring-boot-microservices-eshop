@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/orders")
@@ -17,29 +18,43 @@ public class OrderRestController {
 
     public OrderRestController(){}
 
-    private final static String PROCESSED_ORDER = "ordered";
+    private final static String PROCESSED_ORDER = "ORDERED";
 
     @Autowired
     private OrderServiceImpl orderService;
 
     @DeleteMapping("/{userId}")
-    public void deleteAllOrders(@PathVariable("userId") long userId) {
+    public HttpStatus deleteAllOrders(@PathVariable("userId") long userId) {
         orderService.deleteAllOrders(userId);
+        return HttpStatus.OK;
+    }
+
+    @GetMapping
+    public HttpEntity<List<String>> getAllOrders() {
+        List<String> orders = orderService.getAllOrders()
+                .stream()
+                .map(order -> order.toString())
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
     @GetMapping("/{userId}")
-    public HttpEntity<List<Order>> getAllOrders(@PathVariable("userId") long userId) {
-        return new ResponseEntity<>(orderService.getAllOrdersByUserId(userId), HttpStatus.OK);
+    public HttpEntity<List<String>> getAllOrdersByUserId(@PathVariable("userId") long userId) {
+        List<String> orders = orderService.getAllOrdersByUserId(userId)
+                .stream()
+                .map(order -> order.toString())
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
-    public HttpEntity<Order> getLastOrder(@PathVariable("userId") long userId) {
+    private String getLastOrder(@PathVariable("userId") long userId) {
         Order order = orderService.getLastOrderByUserId(userId);
-        return new ResponseEntity<>(order, HttpStatus.OK);
+        return order.toString();
     }
 
     @PostMapping("/{userId}")
-    public HttpEntity<Order> createOrder(@PathVariable("userId") long userId,
+    public HttpEntity<String> createOrder(@PathVariable("userId") long userId,
                              @RequestParam("products") Map<Product, Integer> products) {
-        return new ResponseEntity<>(orderService.createOrder(userId, products), HttpStatus.CREATED);
+        return new ResponseEntity<>(orderService.createOrder(userId, products).toString(), HttpStatus.CREATED);
     }
 }

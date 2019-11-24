@@ -1,13 +1,16 @@
 package com.gmail.kramarenko104.orderservice.repositories;
 
+import com.gmail.kramarenko104.orderservice.model.Cart;
 import com.gmail.kramarenko104.orderservice.model.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,11 +35,16 @@ public class OrderRepoImpl implements OrderRepo {
 
     @Override
     public List<Order> getAllOrdersByUserId(long userId) {
-        TypedQuery<Order> query = em.createNamedQuery("GET_ALL_ORDERS_BY_USERID", Order.class)
-                .setParameter("userId", userId);
-        List<Order> resultList = query.getResultList();
-        logger.debug("[eshop] OrderRepoImpl.getAllOrdersForUser: List of all orders is: " + resultList.toString());
-        return resultList;
+        List<Order> orders = new ArrayList<>();
+        try {
+            TypedQuery<Order> query = em.createNamedQuery("GET_ALL_ORDERS_BY_USERID", Order.class)
+                    .setParameter("user_id", userId);
+            orders = query.getResultList();
+            logger.debug("[eshop] OrderRepoImpl.getAllOrdersByUserId: " + orders);
+        } catch (NoResultException ex) {
+            logger.debug("[eshop] OrderRepoImpl.getAllOrdersByUserId: Any orders are not found in DB");
+        }
+        return orders;
     }
 
     @Override
@@ -93,5 +101,18 @@ public class OrderRepoImpl implements OrderRepo {
         } catch (EntityNotFoundException ex) {
             logger.debug(ex.getMessage());
         }
+    }
+
+    @Override
+    public List<Order> getAllOrders() {
+        List<Order> orders = new ArrayList<>();
+        try {
+            TypedQuery<Order> query = em.createNamedQuery("GET_ALL_ORDERS", Order.class);
+            orders = query.getResultList();
+            logger.debug("[eshop] OrderRepoImpl.getAllOrders: " + orders);
+        } catch (NoResultException ex) {
+            logger.debug("[eshop] OrderRepoImpl.getAllOrders: Any orders are not found in DB");
+        }
+        return orders;
     }
 }

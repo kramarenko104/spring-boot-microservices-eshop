@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 
@@ -20,8 +19,6 @@ import java.util.Set;
 @EqualsAndHashCode
 @Table(name = "users")
 @Access(value = AccessType.FIELD)
-@DynamicUpdate
-@NamedQuery(name = "GET_USER_BY_LOGIN", query = "from User u where u.login = :login")
 public class User implements Serializable {
 
     @Id

@@ -12,8 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/cart")
@@ -27,35 +29,42 @@ public class CartRestController {
     }
 
     @GetMapping("/users")
-    public HttpEntity<List<Cart>> getAllCarts() {
-        List<Cart> carts = cartService.getAllCarts();
-        return new ResponseEntity<>(carts, HttpStatus.OK);
+    public List<String> getAllCarts() {
+        return (List<String>)(cartService.getAllCarts()
+                .stream()
+                .map(cart -> cart.toString())
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/users/{userId}")
-    public HttpEntity<Cart> getCart(@PathVariable("userId") long userId) {
-        Cart cart = cartService.getCartByUserId(userId);
-        return new ResponseEntity<>(cart, HttpStatus.OK);
+    public String getCart(@PathVariable("userId") long userId) {
+        return getCartPoducts(userId);
     }
 
     @HystrixCommand(fallbackMethod = "fallbackProcessor")
     @PostMapping(value = "/users/{userId}/products/{productId}", params = {"quantity"})
-    public HttpStatus addProduct(@PathVariable("userId") long userId,
+    public String addProduct(@PathVariable("userId") long userId,
                                  @PathVariable("productId") long productId,
                                  @RequestParam("quantity") int quantity) {
         cartService.addProduct(userId, productId, quantity);
-        return HttpStatus.CREATED;
+        return getCartPoducts(userId);
     }
 
     @HystrixCommand(fallbackMethod = "fallbackProcessor")
     @DeleteMapping(value = "/users/{userId}/products/{productId}", params = {"quantity"})
-    public HttpStatus removeProduct(@PathVariable("userId") long userId,
+    public String removeProduct(@PathVariable("userId") long userId,
                                     @PathVariable("productId") long productId,
                                     @RequestParam("quantity") int quantity) {
         cartService.removeProduct(userId, productId, quantity);
-        return HttpStatus.OK;
+        return getCartPoducts(userId);
     }
 
+    private String fallbackProcessor(long userId,
+                                           long productId,
+                                           int quantity) {
+        logger.warn("Some problems knocking to microservice 'product-service'. Try a bit later.");
+        return new String();
+    }
 
     @DeleteMapping("/users/{userId}")
     public HttpStatus clearCartByUserId(@PathVariable("userId") long userId) {
@@ -64,16 +73,13 @@ public class CartRestController {
     }
 
     @PostMapping("/users/{userId}")
-    public HttpEntity<Cart> createCart(@PathVariable("userId") long userId) {
+    public HttpEntity<String> createCart(@PathVariable("userId") long userId) {
         Cart newCart = cartService.createCart(userId);
-        return new ResponseEntity<>(newCart, HttpStatus.CREATED);
+        return new ResponseEntity<>(newCart.toString(), HttpStatus.CREATED);
     }
 
-    private HttpStatus fallbackProcessor(long userId,
-                                         long productId,
-                                         int quantity) {
-        logger.warn("Some problems knocking to microservice 'product-service'. Try a bit later.");
-        return HttpStatus.EXPECTATION_FAILED;
+    private String getCartPoducts(long userId){
+        return (String)(cartService.getCartByUserId(userId).toString());
     }
 
     protected static Cart recalculateCart(Cart cart) {

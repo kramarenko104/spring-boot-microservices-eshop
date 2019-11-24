@@ -40,6 +40,6 @@ public class Product implements Serializable {
 
     @Override
     public String toString() {
-        return "{\"product_id\":" + product_id + ",\"name\":\"" + name + "\",\"price\":" + price + "}";
+        return "{product_id:" + product_id + ",name:" + name + ",price:" + price + "}";
     }
 }

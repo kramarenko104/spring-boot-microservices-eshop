@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -40,6 +39,6 @@ public class Product implements Serializable {
 
     @Override
     public String toString() {
-        return "{\"product_id\":" + product_id + ",\"name\":\"" + name + "\",\"price\":" + price + "}";
+        return "{product_id:" + product_id + ",name:" + name + ",price:" + price + "}";
     }
 }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -19,9 +20,10 @@ import java.util.Map;
 @Access(value = AccessType.FIELD)
 @DynamicUpdate
 @NamedQueries(value =
-        {@NamedQuery(name = "GET_ALL_ORDERS_BY_user_id", query = "from Order o where o.user.user_id = :user_id"),
-        @NamedQuery(name = "GET_LAST_ORDER_NUMBER", query = "select distinct max(o.orderNumber) as lastOrderNumber from Order o"),
-        @NamedQuery(name = "GET_LAST_ORDER_BY_user_id", query = "from Order o where o.user.user_id = :user_id order by o.orderNumber DESC")})
+        {@NamedQuery(name = "GET_ALL_ORDERS_BY_USERID", query = "from Order o where o.user.user_id = :user_id"),
+        @NamedQuery(name = "GET_ALL_ORDERS", query = "from Order o"),
+        @NamedQuery(name = "GET_LAST_ORDER_NUMBER", query = "select distinct max(o.order_number) as lastOrderNumber from Order o"),
+        @NamedQuery(name = "GET_LAST_ORDER_BY_USERID", query = "from Order o where o.user.user_id = :user_id order by o.order_number DESC")})
 public class Order implements Serializable {
 
     @Id
@@ -29,7 +31,7 @@ public class Order implements Serializable {
     private long order_id;
 
     @Column(nullable = false, updatable = false)
-    private long orderNumber;
+    private long order_number;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
@@ -64,7 +66,7 @@ public class Order implements Serializable {
     @Override
     public String toString() {
         return "Order{" +
-                "orderNumber=" + orderNumber +
+                "order_number=" + order_number +
                 ", user=" + user +
                 ", itemsCount=" + itemsCount +
                 ", totalSum=" + totalSum +

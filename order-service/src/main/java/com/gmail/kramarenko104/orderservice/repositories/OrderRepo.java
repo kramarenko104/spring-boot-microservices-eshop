@@ -18,4 +18,5 @@ public interface OrderRepo {
 
     void delete(long orderId);
 
+    List<Order> getAllOrders();
 }

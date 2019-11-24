@@ -3,6 +3,7 @@ package com.gmail.kramarenko104.orderservice.services;
 import com.gmail.kramarenko104.orderservice.model.Order;
 import com.gmail.kramarenko104.orderservice.model.Product;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -15,4 +16,6 @@ public interface OrderService {
     List<Order> getAllOrdersByUserId(long userId);
 
     Order getLastOrderByUserId(long userId);
+
+    List<Order> getAllOrders();
 }
