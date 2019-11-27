@@ -20,20 +20,20 @@ Spring Boot + Spring Cloud App
 - Hystrix, LoadBalancer are enabled for cart-service, order-service that call other microservices
 - REST requests for cart-service:
 - - add {quantity} of product with {productId} to cart for user with {userId}:
-POST localhost:8084/cart/users/{userId}/products/{productId}?quantity={quantity}
+POST localhost:8094/cart/users/{userId}/products/{productId}?quantity={quantity}
 - - dlete {quantity} of product with {productId} from cart for user with {userId}:
-DELETE localhost:8084/cart/users/{userId}/products/{productId}?quantity={quantity}
+DELETE localhost:8094/cart/users/{userId}/products/{productId}?quantity={quantity}
 - - create/deleted cart for user with {userId}:
-POST/DELETE localhost:8084/cart/users/{userId}
+POST/DELETE localhost:8094/cart/users/{userId}
 - REST requests for user-service:
-- - get all users: GET localhost:8083/users
-- - get user by Id: GET localhost:8083/users/{userId}
-- - get user by login: GET localhost:8083/users?login={login}
+- - get all users: GET localhost:8089/users
+- - get user by Id: GET localhost:8093/users/{userId}
+- - get user by login: GET localhost:8093/users?login={login}
 - REST requests for product-service:
-- - get all products: GET localhost:8082/products
-- - get product by Id: GET localhost:8082/products/{productId}
-- - get product by category: GET localhost:8082/products?category={category}
-- - delete product by Id: DELETE localhost:8082/products/{productId}
+- - get all products: GET localhost:8092/products
+- - get product by Id: GET localhost:8092/products/{productId}
+- - get product by category: GET localhost:8092/products?category={category}
+- - delete product by Id: DELETE localhost:8092/products/{productId}
 - REST requests for order-service:
-- - get all orders for user with userId: GET localhost:8081/orders/{userId}
-- - delete all orders for user with userId: DELETE localhost:8081/orders/{userId}
+- - get all orders for user with userId: GET localhost:8091/orders/{userId}
+- - delete all orders for user with userId: DELETE localhost:8091/orders/{userId}
