@@ -3,6 +3,7 @@ Spring Boot + Spring Cloud App
 - Spring Boot 2.2.1
 - Spring Data JPA
 - Spring Cloud Netflix (Eureka, Hystrix, Config server, Ribbon, Turbine dashboard)
+- Kafka 2.3.3
 - Swagger2 documentation API
 - MySQL Server 5.7.23 
 - HikariCP 3.1.0
