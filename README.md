@@ -15,7 +15,7 @@ Spring Boot + Spring Cloud App + Kafka
 
 # Functionality description:
 - 4 Domain microservices: user-service, product-service, cart-service, order-service
-- discover-servise is Eureka server (port 8761)
+- discover-service is Eureka server (port 8761)
 - config-server (port 8888) loads application profiles from gitHub resource
 - Turbine dashboard runs on port 7777. Run it: http://localhost:7777/hystrix => http://localhost:7777/turbine.stream?cluster=default
 - Hystrix, LoadBalancer are enabled for cart-service, order-service that call other microservices
