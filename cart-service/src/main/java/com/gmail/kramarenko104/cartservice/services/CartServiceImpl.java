@@ -58,7 +58,8 @@ public class CartServiceImpl implements CartService {
         cartRepo.addProduct(userId, productToAdd, quantity);
 
         //send message to Kafka about action 'add product to cart'
-        String infoMessage = "product was added to cart: " + productToAdd.toString() + ", quantity: " + quantity + ", userId: " + userId;
+        String infoMessage = "Product was added to cart: " + productToAdd.toString() + ", quantity: " + quantity + ", userId: " + userId +
+                ". Updated cart: " + getCartByUserId(userId);
         sendMessageToKafka(infoMessage);
     }
 
@@ -68,7 +69,8 @@ public class CartServiceImpl implements CartService {
         cartRepo.removeProduct(userId, productToRemove, quantity);
 
         //send message to Kafka about action 'remove product from cart'
-        String infoMessage = "product was removed from cart: " + productToRemove.toString() + ", quantity: " + quantity + ", userId: " + userId;
+        String infoMessage = "product was removed from cart: " + productToRemove.toString() + ", quantity: " + quantity + ", userId: " + userId +
+                ". Updated cart: " + getCartByUserId(userId);
         sendMessageToKafka(infoMessage);
     }
 
