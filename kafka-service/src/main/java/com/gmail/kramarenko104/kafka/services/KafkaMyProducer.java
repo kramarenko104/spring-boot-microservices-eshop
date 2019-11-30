@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 import java.util.Properties;
 
 @Component
@@ -27,7 +25,7 @@ public class KafkaMyProducer {
 
     private Producer<String, String> producer;
 
-    public void config(){
+    public void configure(){
         Properties producerProperties = new Properties();
         /* Defining producer properties */
         producerProperties.put("bootstrap.servers", kafkaBootstrapServers);

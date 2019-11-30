@@ -6,8 +6,15 @@ import com.gmail.kramarenko104.cartservice.repositories.CartRepoImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -49,12 +56,34 @@ public class CartServiceImpl implements CartService {
     public void addProduct(long userId, long productId, int quantity) {
         Product productToAdd = restTemplate.getForObject("http://product-service/products/api/" + productId, Product.class);
         cartRepo.addProduct(userId, productToAdd, quantity);
+
+        //send message to Kafka about action 'add product to cart'
+        String infoMessage = "product was added to cart: " + productToAdd.toString() + ", quantity: " + quantity + ", userId: " + userId;
+        sendMessageToKafka(infoMessage);
     }
 
     @Override
     public void removeProduct(long userId, long productId, int quantity) {
         Product productToRemove = restTemplate.getForObject("http://product-service/products/api/" + productId, Product.class);
         cartRepo.removeProduct(userId, productToRemove, quantity);
+
+        //send message to Kafka about action 'remove product from cart'
+        String infoMessage = "product was removed from cart: " + productToRemove.toString() + ", quantity: " + quantity + ", userId: " + userId;
+        sendMessageToKafka(infoMessage);
+    }
+
+    private void sendMessageToKafka(String infoMessage) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        HttpEntity<String> entity = new HttpEntity<String>(infoMessage, headers);
+        try {
+            String response = restTemplate.exchange("http://kafka-service/kafka/send" , HttpMethod.POST, entity, String.class).getBody();
+            logger.debug("[eshop] got RESPONSE from Kafka: " + response);
+        } catch (HttpClientErrorException e) {
+            logger.debug("[eshop] got CLIENT exception: " + e.getResponseBodyAsString());
+        } catch (HttpServerErrorException e) {
+            logger.debug("[eshop] got SERVER exception: " + e.getResponseBodyAsString());
+        }
     }
 
     @Override

@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.parser.Entity;
-
 @RestController
 @RequestMapping(value = "/kafka")
 public class KafkaController {
@@ -29,17 +27,19 @@ public class KafkaController {
     }
 
     @PostMapping("/send")
-    public HttpStatus sendMessageToKafkaTopic(@RequestParam("message") String message) {
-        producer.config();
+    public HttpEntity<String> sendMessageToKafkaTopic(@RequestBody String message) {
+        producer.configure();
         producer.sendMessage(message);
-        return HttpStatus.OK;
+        logger.debug("[eshop] Message sent to Kafka: " + message);
+        return new ResponseEntity<String>(message, HttpStatus.OK);
     }
 
     @GetMapping("/receive")
     public HttpEntity<String> receiveMessageFromKafkaTopic() {
-        consumer.config();
+        logger.debug("[eshop] enter KafkaController.receiveMessageFromKafkaTopic.....");
+        consumer.configure();
         String messageFromKafka = consumer.receiveMessage();
-        logger.debug("[eshop] " + messageFromKafka);
+        logger.debug("[eshop] Message got from Kafka: " + messageFromKafka);
         return new ResponseEntity<String>(messageFromKafka, HttpStatus.OK);
     }
 }
