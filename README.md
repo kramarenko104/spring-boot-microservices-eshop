@@ -1,5 +1,5 @@
 # spring-boot-microservices-eshop
-Spring Boot + Spring Cloud App
+Spring Boot + Spring Cloud App + Kafka
 - Spring Boot 2.2.1
 - Spring Data JPA
 - Spring Cloud Netflix (Eureka, Hystrix, Config server, Ribbon, Turbine dashboard)
