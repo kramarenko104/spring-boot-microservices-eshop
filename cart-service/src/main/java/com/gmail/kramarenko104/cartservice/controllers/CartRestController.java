@@ -41,27 +41,27 @@ public class CartRestController {
 
     @HystrixCommand(fallbackMethod = "fallbackProcessor")
     @PostMapping(value = "/users/{userId}/products/{productId}", params = {"quantity"})
-    public String addProduct(@PathVariable("userId") long userId,
+    public HttpEntity<String> addProduct(@PathVariable("userId") long userId,
                                  @PathVariable("productId") long productId,
                                  @RequestParam("quantity") int quantity) {
         cartService.addProduct(userId, productId, quantity);
-        return getCartPoducts(userId);
+        return new ResponseEntity<>(getCartPoducts(userId), HttpStatus.OK);
     }
 
     @HystrixCommand(fallbackMethod = "fallbackProcessor")
     @DeleteMapping(value = "/users/{userId}/products/{productId}", params = {"quantity"})
-    public String removeProduct(@PathVariable("userId") long userId,
+    public HttpEntity<String> removeProduct(@PathVariable("userId") long userId,
                                     @PathVariable("productId") long productId,
                                     @RequestParam("quantity") int quantity) {
         cartService.removeProduct(userId, productId, quantity);
-        return getCartPoducts(userId);
+        return new ResponseEntity<>(getCartPoducts(userId), HttpStatus.OK);
     }
 
-    private String fallbackProcessor(long userId,
+    private HttpEntity<String> fallbackProcessor(long userId,
                                            long productId,
                                            int quantity) {
         logger.warn("Some problems knocking to microservice 'product-service'. Try a bit later.");
-        return new String();
+        return new ResponseEntity<>(new String(), HttpStatus.EXPECTATION_FAILED);
     }
 
     @DeleteMapping("/users/{userId}")

@@ -17,9 +17,6 @@ public class KafkaMyProducer {
     @Value("${kafka.template.default-topic}")
     private String MY_TOPIC;
 
-    @Value("${kafka.key}")
-    private String MY_KEY;
-
     @Value("${kafka.bootstrap.servers}")
     private String kafkaBootstrapServers;
 
@@ -38,9 +35,9 @@ public class KafkaMyProducer {
         producer = new KafkaProducer<String, String>(producerProperties);
     }
 
-    public void sendMessage(String message) {
+    public void sendMessage(String  key, String message) {
         logger.debug(String.format("[eshop] #### -> Producing message -> %s", message));
-        ProducerRecord<String, String> record = new ProducerRecord<>(MY_TOPIC, MY_KEY, message);
+        ProducerRecord<String, String> record = new ProducerRecord<>(MY_TOPIC, key, message);
         producer.send(record);
         producer.close();
     }

@@ -55,10 +55,10 @@ public class Cart implements Serializable {
     @Override
     public String toString() {
         return "Cart{" +
-                "cart_id=" + cart_id +
-                ", user=" + user.toString() +
-                ", itemsCount=" + itemsCount +
-                ", totalSum=" + totalSum +
-                ", products=" + Arrays.asList(products) + "}";
+                "id:" + cart_id +
+                ", user:" + user.getName() +
+                ", itemsCount:" + itemsCount +
+                ", totalSum:" + totalSum +
+                ", products:" + Arrays.asList(products) + "}";
     }
 }

@@ -1,5 +1,7 @@
 package com.gmail.kramarenko104.cartservice.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gmail.kramarenko104.cartservice.model.Cart;
 import com.gmail.kramarenko104.cartservice.model.Product;
 import com.gmail.kramarenko104.cartservice.repositories.CartRepoImpl;
@@ -15,6 +17,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +32,8 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public CartServiceImpl(){}
+    public CartServiceImpl() {
+    }
 
     @Override
     public Cart createCart(long userId) {
@@ -56,30 +60,40 @@ public class CartServiceImpl implements CartService {
     public void addProduct(long userId, long productId, int quantity) {
         Product productToAdd = restTemplate.getForObject("http://product-service/products/api/" + productId, Product.class);
         cartRepo.addProduct(userId, productToAdd, quantity);
-
         //send message to Kafka about action 'add product to cart'
-        String infoMessage = "Product was added to cart: " + productToAdd.toString() + ", quantity: " + quantity + ", userId: " + userId +
-                ". Updated cart: " + getCartByUserId(userId);
-        sendMessageToKafka(infoMessage);
+        sendMessageToKafka(userId, productToAdd, quantity, "ADDED");
     }
 
     @Override
     public void removeProduct(long userId, long productId, int quantity) {
         Product productToRemove = restTemplate.getForObject("http://product-service/products/api/" + productId, Product.class);
         cartRepo.removeProduct(userId, productToRemove, quantity);
-
         //send message to Kafka about action 'remove product from cart'
-        String infoMessage = "product was removed from cart: " + productToRemove.toString() + ", quantity: " + quantity + ", userId: " + userId +
-                ". Updated cart: " + getCartByUserId(userId);
-        sendMessageToKafka(infoMessage);
+        sendMessageToKafka(userId, productToRemove, quantity, "REMOVED");
     }
 
-    private void sendMessageToKafka(String infoMessage) {
+    private void sendMessageToKafka(long userId, Product product, int quantity, String action) {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, String> messageMap = new HashMap<>();
+        messageMap.put("cartId", Long.toString(getCartByUserId(userId).getCart_id()));
+        messageMap.put("userId", Long.toString(userId));
+        messageMap.put("action", action);
+        messageMap.put("product", product.toString());
+        messageMap.put("quantity", Integer.toString(quantity));
+        messageMap.put("result", getCartByUserId(userId).toString());
+        String jsonMessage = "";
+        try {
+            jsonMessage = mapper.writeValueAsString(messageMap);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        logger.debug("[eshop] send jsonMessage to Kafka: " + jsonMessage);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        HttpEntity<String> entity = new HttpEntity<String>(infoMessage, headers);
+        HttpEntity<String> entity = new HttpEntity<String>(jsonMessage, headers);
         try {
-            String response = restTemplate.exchange("http://kafka-service/kafka/send" , HttpMethod.POST, entity, String.class).getBody();
+            String response = restTemplate.exchange("http://kafka-service/kafka/send?key=cart", HttpMethod.POST, entity, String.class).getBody();
             logger.debug("[eshop] got RESPONSE from Kafka: " + response);
         } catch (HttpClientErrorException e) {
             logger.debug("[eshop] got CLIENT exception: " + e.getResponseBodyAsString());

@@ -27,15 +27,16 @@ public class KafkaController {
     }
 
     @PostMapping("/send")
-    public HttpEntity<String> sendMessageToKafkaTopic(@RequestBody String message) {
+    public HttpEntity<String> sendMessageToKafkaTopic(@RequestParam String key,
+                                                      @RequestBody String message) {
         producer.configure();
-        producer.sendMessage(message);
+        producer.sendMessage(key,  message);
         logger.debug("[eshop] Message sent to Kafka: " + message);
         return new ResponseEntity<String>(message, HttpStatus.OK);
     }
 
     @GetMapping("/receive")
-    public HttpEntity<String> receiveMessageFromKafkaTopic() {
+    public HttpEntity<String> receiveMessageFromKafkaTopic(@RequestParam String topic) {
         logger.debug("[eshop] enter KafkaController.receiveMessageFromKafkaTopic.....");
         consumer.configure();
         String messageFromKafka = consumer.receiveMessage();
