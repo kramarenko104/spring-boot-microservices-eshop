@@ -1,6 +1,7 @@
 package com.gmail.kramarenko104.kafka.services;
 
 import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 @Component
@@ -29,9 +31,13 @@ public class KafkaMyConsumer {
 
     private Consumer<String, String> consumer;
 
-    public KafkaMyConsumer(){}
+    private List<String> kafkaMessages;
 
-    public void configure(){
+    public KafkaMyConsumer() {
+        kafkaMessages = new ArrayList<>();
+    }
+
+    public void configure() {
         Properties consumerProperties = new Properties();
         // Defining consumer properties
         // establishing the initial connection to the Kafka cluster:
@@ -50,25 +56,61 @@ public class KafkaMyConsumer {
 
     public String receiveMessage() {
         consumer.subscribe(Collections.singletonList(topic));
-        List<String> kafkaMessages = new ArrayList<>();
-        String message;
+        CountDownLatch latch = new CountDownLatch(1);
+        Runnable consumerRunnable = new ConsumerRunnable(latch);
+        new Thread(consumerRunnable).start();
 
-        while(true) {
-                try {
-                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(10000));
-                    for (ConsumerRecord<String, String> record: records) {
-                        message = String.format("Consumed message -> %s with key: %s, partition: %s, offset: %s",
-                                record.value(), record.key(), record.partition(), record.offset());
-                        logger.debug("[eshop] " + message);
-                        kafkaMessages.add(message);
-                    }
-                } catch (Exception ex){
-                    ex.getMessage();
+        // add shutdown hook
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            logger.info("[eshop] Caught shutdown hook");
+            ((ConsumerRunnable) consumerRunnable).shutdown();
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                logger.error("[eshop] App is interrupted ", e);
+            }
+            logger.info("[eshop] App has exited");
+        }));
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            logger.error("[eshop] App is interrupted ", e);
+        }
+        return kafkaMessages.stream().collect(Collectors.joining("\n"));
+    }
+
+    private class ConsumerRunnable implements Runnable {
+
+        private final CountDownLatch latch;
+
+        public ConsumerRunnable(CountDownLatch latch) {
+            this.latch = latch;
+        }
+
+        @Override
+        public void run() {
+            String message;
+            try {
+                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(10000));
+                for (ConsumerRecord<String, String> record : records) {
+                    message = String.format("Consumed message -> %s with key: %s, partition: %s, offset: %s",
+                            record.value(), record.key(), record.partition(), record.offset());
+                    logger.debug("[eshop] " + message);
+                    kafkaMessages.add(message);
                 }
-                finally {
-                    consumer.close();
-                }
-            return kafkaMessages.stream().collect(Collectors.joining("\n"));
+            } catch (WakeupException ex) {
+                logger.info("[eshop] KafkaConsumer received shutdown signal...");
+            } finally {
+                consumer.close();
+                // tell KafkaConsumer that ConsumerThread is done
+                latch.countDown();
+            }
+        }
+
+        public void shutdown() {
+            // interrupt consumer.poll()
+            consumer.wakeup();
         }
     }
 }
