@@ -37,7 +37,6 @@ public class KafkaController {
 
     @GetMapping("/receive")
     public HttpEntity<String> receiveMessageFromKafkaTopic(@RequestParam String topic) {
-        logger.debug("[eshop] enter KafkaController.receiveMessageFromKafkaTopic.....");
         consumer.configure();
         String messageFromKafka = consumer.receiveMessage();
         logger.debug("[eshop] Message got from Kafka: " + messageFromKafka);
