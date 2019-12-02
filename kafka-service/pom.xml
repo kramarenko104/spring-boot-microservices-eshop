@@ -65,17 +65,17 @@
             <version>2.9.2</version>
         </dependency>
 
-        <!--Kafka 2.3.3.RELEASE-->
+        <!--Kafka -->
         <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
-            <version>${spring-kafka.version}</version>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka.version}</version>
         </dependency>
 
         <!--<dependency>-->
         <!--<groupId>org.apache.kafka</groupId>-->
         <!--<artifactId>kafka-streams</artifactId>-->
-        <!--<version>2.3.0</version>-->
+        <!--<version>${kafka.version}</version>-->
         <!--</dependency>-->
 
         <!-- slf4j-log4j +++++++++++++++++++++++++++++++++++++++++ -->
