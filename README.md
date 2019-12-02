@@ -20,6 +20,7 @@ Spring Boot + Spring Cloud App + Kafka
 - Turbine dashboard runs on port 7777. Run it: http://localhost:7777/hystrix => http://localhost:7777/turbine.stream?cluster=default
 - Hystrix, LoadBalancer are enabled for cart-service, order-service that call other microservices
 - Info concerning actions with user's cart (add/remove product) is sent to Kafka
+- Check Kafka Consumer work: Get method, http://localhost:9000/kafka/receive?topic=julia_topic (see screenshots/ Check_Kafka_Consumer_Group_from_Postman.png)
 - REST requests for cart-service:
 - - add {quantity} of product with {productId} to cart for user with {userId}:
 POST localhost:8094/cart/users/{userId}/products/{productId}?quantity={quantity}
