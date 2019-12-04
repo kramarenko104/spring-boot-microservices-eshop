@@ -46,8 +46,8 @@ public class KafkaMyConsumer {
         // or the Kafka-based offset management strategy:
         consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        consumerProperties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
-        consumerProperties.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, 1000);
+        // Delivery "at least once": offsets will be committed AFTER messages processing finishes
+        consumerProperties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 
@@ -102,6 +102,10 @@ public class KafkaMyConsumer {
             } catch (WakeupException ex) {
                 logger.info("[eshop] KafkaConsumer received shutdown signal...");
             } finally {
+                // commit offsets manually
+                if (kafkaMessages.size() > 0) {
+                    consumer.commitSync();
+                }
                 consumer.close();
                 // tell KafkaConsumer that ConsumerThread is done
                 latch.countDown();
