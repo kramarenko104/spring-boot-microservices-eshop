@@ -93,7 +93,8 @@ public class CartServiceImpl implements CartService {
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity<String> entity = new HttpEntity<String>(jsonMessage, headers);
         try {
-            String response = restTemplate.exchange("http://kafka-service/kafka/send?key=cart", HttpMethod.POST, entity, String.class).getBody();
+            // Messages with cart's actions are sent to Kafka topic with key=userId to collect all info concerning the same user in the same partition
+            String response = restTemplate.exchange("http://kafka-service/kafka/send?key="+userId, HttpMethod.POST, entity, String.class).getBody();
             logger.debug("[eshop] got RESPONSE from Kafka: " + response);
         } catch (HttpClientErrorException e) {
             logger.debug("[eshop] got CLIENT exception: " + e.getResponseBodyAsString());
