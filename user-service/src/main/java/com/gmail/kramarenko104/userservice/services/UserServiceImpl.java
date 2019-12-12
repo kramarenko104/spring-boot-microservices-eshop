@@ -3,22 +3,18 @@ package com.gmail.kramarenko104.userservice.services;
 import com.gmail.kramarenko104.userservice.models.User;
 import com.gmail.kramarenko104.userservice.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final static String SALT = "34Ru9k";
+
     private UserRepo userRepo;
 
     @Autowired
@@ -44,7 +40,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(User newUser) {
+    public User updateUser(User newUser) {
         return userRepo.updateUser(newUser.getLogin(),
                 newUser.getPassword(), newUser.getName(),
                 newUser.getAddress(), newUser.getComment(), newUser.getUser_id());
@@ -60,27 +56,7 @@ public class UserServiceImpl implements UserService {
         return (List) userRepo.findAll();
     }
 
-    @Override
-    public Map<String, String> verifyUser(User user, String repassword) {
-        Map<String, String> errors = new HashMap<>();
-        String login = user.getLogin();
-        String password = user.getPassword();
-
-        if (repassword.length() > 0 && !password.equals(repassword)) {
-            errors.put("", "Password and retyped one don't match!");
-        }
-
-        String patternString = "([0-9a-zA-Z._-]+@[0-9a-zA-Z_-]+[.]{1}[a-z]+)";
-        Pattern pattern = Pattern.compile(patternString);
-        Matcher matcher = pattern.matcher(login);
-        if (!matcher.matches()) {
-            errors.put("", "e-mail should have correct format");
-        }
-        return errors;
-    }
-
-    @Override
-    public String hashString(String hash) {
+    private String hashString(String hash) {
         MessageDigest md5 = null;
         try {
             md5 = MessageDigest.getInstance("MD5");

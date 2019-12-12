@@ -1,9 +1,7 @@
 package com.gmail.kramarenko104.userservice.services;
 
 import com.gmail.kramarenko104.userservice.models.User;
-
 import java.util.List;
-import java.util.Map;
 
 public interface UserService {
 
@@ -13,13 +11,10 @@ public interface UserService {
 
     User getUserByLogin(String login);
 
-    User update(User user);
+    User updateUser(User user);
 
     void deleteUser(long id);
 
     List<User> getAllUsers();
 
-    String hashString(String hash);
-
-    Map<String, String> verifyUser(User user, String repassword);
 }
