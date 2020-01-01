@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.List;
 import java.util.Map;
 
@@ -66,34 +67,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order getLastOrderByUserId(long userId) {
-        Order order = orderRepo.getLastOrderByUserId(userId);
-        if (order != null) {
-            order = recalculateOrder(order);
-        }
-        return order;
+        return orderRepo.getLastOrderByUserId(userId);
     }
 
     @Override
     public List<Order> getAllOrders() {
         return orderRepo.getAllOrders();
-    }
-
-    private Order recalculateOrder(Order order) {
-        Map<Product, Integer> productsInOrder = order.getProducts();
-        int itemsCount = 0;
-        int totalSum = 0;
-        if (productsInOrder.size() > 0) {
-            int quantity = 0;
-            for (Map.Entry<Product, Integer> entry : productsInOrder.entrySet()) {
-                quantity = entry.getValue();
-                itemsCount += quantity;
-                totalSum += quantity * entry.getKey().getPrice();
-            }
-        }
-        if (itemsCount > 0) {
-            order.setItemsCount(itemsCount);
-            order.setTotalSum(totalSum);
-        }
-        return order;
     }
 }

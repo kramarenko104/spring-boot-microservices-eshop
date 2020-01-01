@@ -1,10 +1,9 @@
 package com.gmail.kramarenko104.orderservice.repositories;
 
-import com.gmail.kramarenko104.orderservice.model.Cart;
 import com.gmail.kramarenko104.orderservice.model.Order;
+import com.gmail.kramarenko104.orderservice.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -12,7 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class OrderRepoImpl implements OrderRepo {
@@ -39,7 +40,9 @@ public class OrderRepoImpl implements OrderRepo {
         try {
             TypedQuery<Order> query = em.createNamedQuery("GET_ALL_ORDERS_BY_USERID", Order.class)
                     .setParameter("user_id", userId);
-            orders = query.getResultList();
+            orders = query.getResultList().stream()
+                    .map(order -> recalculateOrder(order))
+                    .collect(Collectors.toList());
             logger.debug("[eshop] OrderRepoImpl.getAllOrdersByUserId: " + orders);
         } catch (NoResultException ex) {
             logger.debug("[eshop] OrderRepoImpl.getAllOrdersByUserId: Any orders are not found in DB");
@@ -55,6 +58,7 @@ public class OrderRepoImpl implements OrderRepo {
             TypedQuery<Order> query = em.createNamedQuery("GET_LAST_ORDER_BY_USERID", Order.class)
                     .setParameter("userId", userId);
             order = query.setMaxResults(1).getSingleResult();
+            order = recalculateOrder(order);
             logger.debug("[eshop] OrderRepoImpl.getLastOrderByUserId: the last orders is: " + order);
         } catch (NoResultException ex) {
             logger.debug("[eshop] OrderRepoImpl.getLastOrderByUserId: Order was not found in DB for userId=" + userId);
@@ -114,5 +118,25 @@ public class OrderRepoImpl implements OrderRepo {
             logger.debug("[eshop] OrderRepoImpl.getAllOrders: Any orders are not found in DB");
         }
         return orders;
+    }
+
+    private Order recalculateOrder(Order order) {
+        if (order == null) return null;
+        Map<Product, Integer> productsInOrder = order.getProducts();
+        int itemsCount = 0;
+        int totalSum = 0;
+        if (productsInOrder.size() > 0) {
+            int quantity = 0;
+            for (Map.Entry<Product, Integer> entry : productsInOrder.entrySet()) {
+                quantity = entry.getValue();
+                itemsCount += quantity;
+                totalSum += quantity * entry.getKey().getPrice();
+            }
+        }
+        if (itemsCount > 0) {
+            order.setItemsCount(itemsCount);
+            order.setTotalSum(totalSum);
+        }
+        return order;
     }
 }
