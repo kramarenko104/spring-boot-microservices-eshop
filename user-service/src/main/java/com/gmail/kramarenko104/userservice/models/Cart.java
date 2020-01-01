@@ -1,5 +1,6 @@
 package com.gmail.kramarenko104.userservice.models;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,7 @@ public class Cart implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty(name="cart_id", example="1", required=true)
     private long cart_id;
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
@@ -33,9 +35,11 @@ public class Cart implements Serializable {
     private User user;
 
     @Transient
+    @ApiModelProperty(name="itemsCount", example="13", required=true)
     private int itemsCount;
 
     @Transient
+    @ApiModelProperty(name="totalSum", example="40362", required=true)
     private int totalSum;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -44,6 +48,10 @@ public class Cart implements Serializable {
     @Column(name = "quantity")
     @OrderColumn (name = "cart_id")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @ApiModelProperty(name="products",
+            value="products' list un the current shopping cart",
+            example="[{{id:6, name:Rene Caovilla, price:3750}:3}, {{id:1, name:Nora Naviano Imressive dusty blue, price:3450}:7}, {{id:2, name:Very berry marsala, price:1654}:3}]",
+            required=true)
     private Map<Product, Integer> products;
 
     public Cart() {

@@ -34,10 +34,10 @@ public class CartServiceApplication {
 	public Docket swaggerApi() {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.select()
-				.apis(RequestHandlerSelectors.basePackage("pl.piomin.services.employee.controller"))
+				.apis(RequestHandlerSelectors.basePackage("com.gmail.kramarenko104.cartservice.controllers"))
 				.paths(PathSelectors.any())
 				.build()
-				.apiInfo(new ApiInfoBuilder().version("1.0").title("Employee API").description("Documentation Employee API v1.0").build());
+				.apiInfo(new ApiInfoBuilder().version("1.0").title("Cart API").description("Documentation Cart API v1.0").build());
 	}
 
 }

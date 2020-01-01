@@ -25,6 +25,7 @@ Spring Boot + Spring Cloud App + Kafka
 - - Run command before this request to see topic from beginning (stop kafka-service before this):
 - - kafka-consumer-groups --bootstrap-server localhost:9092 --group test --reset-offsets --to-earliest --execute -topic julia_topic
 - Messages with cart's actions are sent to Kafka topic with key=userId to collect all info concerning the same user in the same partition
+- Swagger docs: http://localhost:8093/swagger-ui.html (user-service)
 - REST requests for cart-service:
 - - add {quantity} of product with {productId} to cart for user with {userId}:
 POST localhost:8094/cart/users/{userId}/products/{productId}?quantity={quantity}

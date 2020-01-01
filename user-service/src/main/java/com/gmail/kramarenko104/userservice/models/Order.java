@@ -1,5 +1,6 @@
 package com.gmail.kramarenko104.userservice.models;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,9 +29,11 @@ public class Order implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty(name="order_id", value="order_id", example="1", required=true)
     private long order_id;
 
     @Column(nullable = false, updatable = false)
+    @ApiModelProperty(name="order_number", value="order_number", example="345", required=true)
     private long order_number;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
@@ -40,12 +43,15 @@ public class Order implements Serializable {
 
     @Column(columnDefinition = "varchar(20)")
     @EqualsAndHashCode.Exclude
+    @ApiModelProperty(name="status", value="order's status", example="SHIPPED", required=false)
     private String status;
 
     @Transient
+    @ApiModelProperty(name="itemsCount", value="itemsCount in the last order", example="4",required=true)
     private int itemsCount;
 
     @Transient
+    @ApiModelProperty(name="totalSum", value="totalSum in the last order", example="12904", required=true)
     private int totalSum;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -55,6 +61,10 @@ public class Order implements Serializable {
     @OrderColumn (name = "order_id")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @NotNull
+    @ApiModelProperty(name="products",
+            value="products' list un the current in the last order",
+            example="[{{product_id:6,name:Rene Caovilla,price:3750}:3}, {{product_id:2,name:Very berry marsala,price:1654}:1}]",
+            required=true)
     private Map<Product, Integer> products;
 
     public Order() {
