@@ -6,12 +6,12 @@ import com.gmail.kramarenko104.orderservice.model.User;
 import com.gmail.kramarenko104.orderservice.repositories.OrderRepoImpl;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +19,10 @@ import java.util.Map;
 public class OrderServiceImpl implements OrderService {
 
     private final static String PROCESSED_ORDER = "ordered";
+
+    @Value("${user-service-url}")
+    private String userServiceURL;
+
     @Autowired
     private OrderRepoImpl orderRepo;
 
@@ -39,7 +43,7 @@ public class OrderServiceImpl implements OrderService {
         long newOrderNumber = orderRepo.getNewOrderNumber();
         // createProduct the new order on the base of Cart
         Order newOrder = new Order();
-        newOrder.setUser(restTemplate.getForObject("http://user-service/users/api/" + userId, User.class));
+        newOrder.setUser(restTemplate.getForObject(userServiceURL + userId, User.class));
         newOrder.setOrder_number(newOrderNumber);
         newOrder.setProducts(products);
         newOrder.setStatus(PROCESSED_ORDER);

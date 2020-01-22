@@ -8,6 +8,7 @@ import com.gmail.kramarenko104.cartservice.repositories.CartRepoImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,6 +26,12 @@ import java.util.Map;
 public class CartServiceImpl implements CartService {
 
     private static Logger logger = LoggerFactory.getLogger(CartServiceImpl.class);
+
+    @Value( "${product-service-url}" )
+    private String productServiceURL;
+
+    @Value( "${kafka-service-url}" )
+    private String kafkaServiceURL;
 
     @Autowired
     private CartRepoImpl cartRepo;
@@ -58,7 +65,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void addProduct(long userId, long productId, int quantity) {
-        Product productToAdd = restTemplate.getForObject("http://product-service/products/api/" + productId, Product.class);
+        Product productToAdd = restTemplate.getForObject(productServiceURL + productId, Product.class);
         cartRepo.addProduct(userId, productToAdd, quantity);
         //send message to Kafka about action 'add product to cart'
         sendMessageToKafka(userId, productToAdd, quantity, "ADDED");
@@ -66,7 +73,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void removeProduct(long userId, long productId, int quantity) {
-        Product productToRemove = restTemplate.getForObject("http://product-service/products/api/" + productId, Product.class);
+        Product productToRemove = restTemplate.getForObject(productServiceURL + productId, Product.class);
         cartRepo.removeProduct(userId, productToRemove, quantity);
         //send message to Kafka about action 'remove product from cart'
         sendMessageToKafka(userId, productToRemove, quantity, "REMOVED");
@@ -94,7 +101,7 @@ public class CartServiceImpl implements CartService {
         HttpEntity<String> entity = new HttpEntity<String>(jsonMessage, headers);
         try {
             // Messages with cart's actions are sent to Kafka topic with key=userId to collect all info concerning the same user in the same partition
-            String response = restTemplate.exchange("http://kafka-service/kafka/send?key="+userId, HttpMethod.POST, entity, String.class).getBody();
+            String response = restTemplate.exchange(kafkaServiceURL + userId, HttpMethod.POST, entity, String.class).getBody();
             logger.debug("[eshop] got RESPONSE from Kafka: " + response);
         } catch (HttpClientErrorException e) {
             logger.debug("[eshop] got CLIENT exception: " + e.getResponseBodyAsString());
