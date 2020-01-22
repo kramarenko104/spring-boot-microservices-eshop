@@ -8,6 +8,7 @@ import com.gmail.kramarenko104.cartservice.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -29,6 +30,9 @@ public class CartRepoImpl implements CartRepo {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Value( "${user-service-url}" )
+    private String userServiceURL;
+
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             isolation = Isolation.READ_COMMITTED,
@@ -36,8 +40,8 @@ public class CartRepoImpl implements CartRepo {
     public Cart createCart(long userId) {
         Cart cart = null;
         try {
-            User userDb = Optional.ofNullable(restTemplate.getForObject("http://user-service/user/"+userId, User.class))
-                    .orElseThrow(() -> new UserNotFoundException("User with id=" + userId + "not found in DB. Cart cannot be created"));
+            User userDb = Optional.ofNullable(restTemplate.getForObject(userServiceURL + userId, User.class))
+                    .orElseThrow(() -> new UserNotFoundException("User with id=" + userId + " was not found in DB. Cart cannot be created"));
             // make currentUser managed
             User currentUser = em.merge(userDb);
             cart = new Cart();
@@ -72,7 +76,7 @@ public class CartRepoImpl implements CartRepo {
             cart = query.getSingleResult();
             logger.debug("[eshop] CartRepoImpl.getCartByUserId: return cart: " + cart);
         } catch (NoResultException ex) {
-            logger.debug("[eshop] CartRepoImpl.getCartByUserId: Cart for user_id=" + userId + " not found in DB");
+            logger.debug("[eshop] CartRepoImpl.getCartByUserId: Cart for userId=" + userId + " not found in DB");
         }
         return cart;
     }

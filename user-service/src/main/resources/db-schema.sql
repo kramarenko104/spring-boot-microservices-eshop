@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS eshopdb CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE eshopdb;
+CREATE DATABASE IF NOT EXISTS eshopdbMS CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE eshopdbMS;
 
 CREATE TABLE IF NOT EXISTS users
 (
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users
 	name VARCHAR(50) NOT NULL,
 	address VARCHAR(50) NOT NULL,
 	comment VARCHAR(100)
-)
+) 
 ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS roles
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS user_roles
   FOREIGN KEY (user_id) REFERENCES users (user_id),
   FOREIGN KEY (role_id) REFERENCES roles (role_id),
   UNIQUE (user_id, role_id)
-) 
+)
 ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS products
@@ -62,7 +62,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS orders
 (
 	order_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	order_number INT NOT NULL,
+	orderNumber INT NOT NULL,
 	user_id INT NOT NULL,
 	status VARCHAR(20),
 	FOREIGN KEY (user_id) REFERENCES users (user_id)
