@@ -35,7 +35,9 @@ public class ProductRestController {
 
     @GetMapping("/{productId}")
     public HttpEntity<String> getProduct(@PathVariable("productId") long productId) {
-        return new ResponseEntity<>(productService.get(productId).toString(),  HttpStatus.OK);
+        Product product = productService.get(productId);
+        String response = product != null ? product.toString() : "product not found";
+        return new ResponseEntity<>(response,  HttpStatus.OK);
     }
 
     @GetMapping("/api/{productId}")
