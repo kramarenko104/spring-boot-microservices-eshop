@@ -23,7 +23,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product get(long productId) {
-        return (productRepo.findById(productId).isPresent() ? productRepo.findById(productId).get() : null);
+        return (productRepo.findById(productId).orElse(null));
     }
 
     @Override
