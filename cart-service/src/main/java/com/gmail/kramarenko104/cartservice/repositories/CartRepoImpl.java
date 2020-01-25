@@ -27,11 +27,16 @@ public class CartRepoImpl implements CartRepo {
     @PersistenceContext
     private EntityManager em;
 
-    @Autowired
     private RestTemplate restTemplate;
 
-    @Value( "${user-service-url}" )
     private String userServiceURL;
+
+    @Autowired
+    public CartRepoImpl(RestTemplate restTemplate,
+                              @Value ("${user-service-url}") String userServiceURL) {
+        this.restTemplate = restTemplate;
+        this.userServiceURL = userServiceURL;
+    }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW,

@@ -19,13 +19,15 @@ public class ProductRestController {
 
     private static Logger logger = LoggerFactory.getLogger(ProductRestController.class);
 
-    @Autowired
-    ProductServiceImpl productService;
+    private ProductServiceImpl productService;
 
-    @Autowired
     private Environment env;
 
-    public ProductRestController() {
+    @Autowired
+    public ProductRestController(ProductServiceImpl productService,
+                                 Environment env) {
+        this.productService = productService;
+        this.env = env;
     }
 
     @PostMapping()

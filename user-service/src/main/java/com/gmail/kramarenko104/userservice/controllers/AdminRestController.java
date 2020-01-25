@@ -17,14 +17,15 @@ import java.util.stream.Collectors;
 @RequestMapping("/admin")
 public class AdminRestController {
 
-    @Autowired
     ProductClient productClient;
 
     UserServiceImpl userService;
 
     @Autowired
-    public AdminRestController(UserServiceImpl userService){
+    public AdminRestController(UserServiceImpl userService,
+                               ProductClient productClient){
         this.userService = userService;
+        this.productClient = productClient;
     }
 
     @GetMapping("/products")

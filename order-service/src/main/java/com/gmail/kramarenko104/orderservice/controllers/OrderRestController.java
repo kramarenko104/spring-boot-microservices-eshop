@@ -8,7 +8,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -16,12 +16,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/orders")
 public class OrderRestController {
 
-    public OrderRestController(){}
-
     private final static String PROCESSED_ORDER = "ORDERED";
 
-    @Autowired
     private OrderServiceImpl orderService;
+
+    @Autowired
+    public OrderRestController(OrderServiceImpl orderService){
+        this.orderService = orderService;
+    }
 
     @DeleteMapping("/{userId}")
     public HttpStatus deleteAllOrders(@PathVariable("userId") long userId) {
@@ -30,21 +32,21 @@ public class OrderRestController {
     }
 
     @GetMapping
-    public HttpEntity<List<String>> getAllOrders() {
-        List<String> orders = orderService.getAllOrders()
+    public HttpEntity<String> getAllOrders() {
+        String orders = orderService.getAllOrders()
                 .stream()
                 .map(order -> order.toString())
-                .collect(Collectors.toList());
-        return new ResponseEntity<>(orders, HttpStatus.OK);
+                .collect(Collectors.joining(","));
+        return new ResponseEntity<>(orders.length() > 0 ? orders : "orders not found", HttpStatus.OK);
     }
 
     @GetMapping("/{userId}")
-    public HttpEntity<List<String>> getAllOrdersByUserId(@PathVariable("userId") long userId) {
-        List<String> orders = orderService.getAllOrdersByUserId(userId)
+    public HttpEntity<String> getAllOrdersByUserId(@PathVariable("userId") long userId) {
+        String orders = orderService.getAllOrdersByUserId(userId)
                 .stream()
                 .map(order -> order.toString())
-                .collect(Collectors.toList());
-        return new ResponseEntity<>(orders, HttpStatus.OK);
+                .collect(Collectors.joining(","));
+        return new ResponseEntity<>(orders.length() > 0  ? orders : "orders not found", HttpStatus.OK);
     }
 
     private String getLastOrder(@PathVariable("userId") long userId) {

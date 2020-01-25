@@ -22,16 +22,18 @@ public class KafkaController {
 
     private static final Logger logger = LoggerFactory.getLogger(KafkaController.class);
 
-    @Autowired
     private KafkaTemplate kafkaTemplate;
 
-    @Value("${spring.kafka.topic}")
     private String topicName;
 
     private List<String> kafkaMessages;
 
-    public KafkaController() {
+    @Autowired
+    public KafkaController(KafkaTemplate kafkaTemplate,
+                           @Value("${spring.kafka.topic}") String topicName) {
         kafkaMessages = new ArrayList<>();
+        this.kafkaTemplate = kafkaTemplate;
+        this.topicName = topicName;
     }
 
     @PostMapping("/send")

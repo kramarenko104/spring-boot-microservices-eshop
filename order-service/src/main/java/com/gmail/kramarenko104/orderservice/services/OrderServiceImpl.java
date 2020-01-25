@@ -20,14 +20,20 @@ public class OrderServiceImpl implements OrderService {
 
     private final static String PROCESSED_ORDER = "ordered";
 
-    @Value("${user-service-url}")
     private String userServiceURL;
 
-    @Autowired
     private OrderRepoImpl orderRepo;
 
-    @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    public OrderServiceImpl(RestTemplate restTemplate,
+                            OrderRepoImpl orderRepo,
+                           @Value ("${user-service-url}") String userServiceURL) {
+        this.restTemplate = restTemplate;
+        this.orderRepo = orderRepo;
+        this.userServiceURL = userServiceURL;
+    }
 
     @Override
     public void deleteAllOrders(long userId) {
