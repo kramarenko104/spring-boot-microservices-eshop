@@ -56,7 +56,7 @@ public class OrderRepoImpl implements OrderRepo {
         logger.debug("[eshop] OrderRepoImpl.getLastOrderByUserId: get order for userId: " + userId);
         try {
             TypedQuery<Order> query = em.createNamedQuery("GET_LAST_ORDER_BY_USERID", Order.class)
-                    .setParameter("userId", userId);
+                    .setParameter("user_id", userId);
             order = query.setMaxResults(1).getSingleResult();
             order = recalculateOrder(order);
             logger.debug("[eshop] OrderRepoImpl.getLastOrderByUserId: the last orders is: " + order);
@@ -80,7 +80,7 @@ public class OrderRepoImpl implements OrderRepo {
             rollbackFor = Exception.class)
     public void deleteAllOrdersForUser(long userId) {
         TypedQuery<Order> query = em.createNamedQuery("GET_ALL_ORDERS_BY_USERID", Order.class)
-                .setParameter("userId", userId);
+                .setParameter("user_id", userId);
         List<Order> ordersToRemove = query.getResultList();
         ordersToRemove.stream().forEach(order -> em.remove(order));
     }

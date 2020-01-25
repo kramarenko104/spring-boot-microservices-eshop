@@ -30,3 +30,8 @@ INSERT INTO user_roles (user_id, role_id) VALUES (2, 2);
 INSERT INTO user_roles (user_id, role_id) VALUES (3, 2);
 INSERT INTO user_roles (user_id, role_id) VALUES (4, 2);
 
+INSERT INTO orders (order_id, order_number, user_id, status) VALUES (1, 123, 1, 'ORDERED');
+
+INSERT INTO orders_products (order_id, product_id, quantity) VALUES (1, 5, 2);
+INSERT INTO orders_products (order_id, product_id, quantity) VALUES (1, 2, 1);
+

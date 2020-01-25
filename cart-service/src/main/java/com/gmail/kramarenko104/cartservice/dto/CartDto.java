@@ -13,8 +13,8 @@ public class CartDto {
     private int totalSum;
     private Map<Product, Integer> products;
 
-    public CartDto(long user_id) {
-        this.user_id = user_id;
+    public CartDto(long userId) {
+        this.user_id = userId;
         itemsCount = 0;
         totalSum = 0;
         products = new HashMap<>();
@@ -23,7 +23,7 @@ public class CartDto {
     @Override
     public String toString() {
         return "Cart{" +
-                "user_id:" + user_id +
+                "userId:" + user_id +
                 ", itemsCount:" + itemsCount +
                 ", totalSum:" + totalSum +
                 '}';

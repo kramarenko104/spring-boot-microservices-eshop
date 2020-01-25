@@ -62,7 +62,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS orders
 (
 	order_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	orderNumber INT NOT NULL,
+	order_number INT NOT NULL,
 	user_id INT NOT NULL,
 	status VARCHAR(20),
 	FOREIGN KEY (user_id) REFERENCES users (user_id)

@@ -55,7 +55,7 @@ public class Cart implements Serializable {
     @Override
     public String toString() {
         return "Cart{" +
-                "cart_id=" + cart_id +
+                "cartId=" + cart_id +
                 ", user=" + user.toString() +
                 ", itemsCount=" + itemsCount +
                 ", totalSum=" + totalSum +

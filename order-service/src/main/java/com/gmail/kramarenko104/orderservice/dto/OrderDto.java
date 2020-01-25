@@ -9,7 +9,7 @@ import java.util.Map;
 @Setter
 public class OrderDto {
 
-    private long userId;
+    private long user_id;
 
     private long orderNumber;
 
@@ -20,7 +20,7 @@ public class OrderDto {
     private Map<Product, Integer> products;
 
     public OrderDto(long userId) {
-        this.userId = userId;
+        this.user_id = userId;
         itemsCount = 0;
         totalSum = 0;
         products = new HashMap<>();
@@ -30,7 +30,7 @@ public class OrderDto {
     public String toString() {
         return "Order{" +
                 "orderNumber=" + orderNumber +
-                ", userId=" + userId +
+                ", userId=" + user_id +
                 ", itemsCount=" + itemsCount +
                 ", totalSum=" + totalSum +
                 ", products=[" + Arrays.asList(products) + "]}";

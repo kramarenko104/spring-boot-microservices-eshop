@@ -63,7 +63,7 @@ public class Order implements Serializable {
     @NotNull
     @ApiModelProperty(name="products",
             value="products' list un the current in the last order",
-            example="[{{product_id:6,name:Rene Caovilla,price:3750}:3}, {{product_id:2,name:Very berry marsala,price:1654}:1}]",
+            example="[{{productId:6,name:Rene Caovilla,price:3750}:3}, {{productId:2,name:Very berry marsala,price:1654}:1}]",
             required=true)
     private Map<Product, Integer> products;
 

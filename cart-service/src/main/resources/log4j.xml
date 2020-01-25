@@ -12,7 +12,7 @@
 
     <appender name="file" class="org.apache.log4j.RollingFileAppender">
         <param name="append" value="false"/>
-        <param name="file" value=".\\logs\\debug.log"/>
+        <param name="file" value=".\\logs\\cart-debug.log"/>
         <param name="maxFileSize" value="10MB"/>
         <param name="maxBackupIndex" value="10"/>
         <layout class="org.apache.log4j.EnhancedPatternLayout">
