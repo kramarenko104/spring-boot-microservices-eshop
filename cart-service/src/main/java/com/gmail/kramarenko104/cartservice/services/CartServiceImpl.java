@@ -27,19 +27,23 @@ public class CartServiceImpl implements CartService {
 
     private static Logger logger = LoggerFactory.getLogger(CartServiceImpl.class);
 
-    @Value( "${product-service-url}" )
     private String productServiceURL;
 
-    @Value( "${kafka-service-url}" )
     private String kafkaServiceURL;
 
-    @Autowired
     private CartRepoImpl cartRepo;
 
-    @Autowired
     private RestTemplate restTemplate;
 
-    public CartServiceImpl() {
+    @Autowired
+    public CartServiceImpl(RestTemplate restTemplate,
+                           CartRepoImpl cartRepo,
+                           @Value ("${product-service-url}") String productServiceURL,
+                           @Value ("${kafka-service-url}") String kafkaServiceURL) {
+        this.restTemplate = restTemplate;
+        this.cartRepo = cartRepo;
+        this.productServiceURL = productServiceURL;
+        this.kafkaServiceURL = kafkaServiceURL;
     }
 
     @Override
@@ -61,7 +65,6 @@ public class CartServiceImpl implements CartService {
     public List<Cart> getAllCarts() {
         return cartRepo.getAllCarts();
     }
-
 
     @Override
     public void addProduct(long userId, long productId, int quantity) {

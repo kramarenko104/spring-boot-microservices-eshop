@@ -20,10 +20,12 @@ import java.util.stream.Collectors;
 public class CartRestController {
 
     private static Logger logger = LoggerFactory.getLogger(CartRestController.class);
-    @Autowired
+
     private CartServiceImpl cartService;
 
-    public CartRestController() {
+    @Autowired
+    public CartRestController(CartServiceImpl cartService) {
+        this.cartService = cartService;
     }
 
     @GetMapping("/users")
