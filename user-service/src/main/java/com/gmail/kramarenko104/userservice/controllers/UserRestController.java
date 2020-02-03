@@ -9,6 +9,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,8 +43,10 @@ public class UserRestController {
 
     @GetMapping("/{userId}")
     @ApiOperation(value = "Get User by userId", notes = "Get user by userId from user-service DB", response = User.class)
-    public HttpEntity<User> getUser(@PathVariable("userId") long userId){
-        return ResponseEntity.ok(userService.getUser(userId));
+    public HttpEntity<String> getUser(@PathVariable("userId") long userId){
+        return ResponseEntity.ok(Mono.just(userService.getUser(userId))
+                                    .map(user -> user.toString())
+                                    .block());
     }
 
     @GetMapping("/api/{userId}")
@@ -53,14 +56,18 @@ public class UserRestController {
 
     @GetMapping(params = {"login"})
     @ApiOperation(value = "Get User by login", notes = "Get user by login from user-service DB", response = User.class)
-    public HttpEntity<User> getUserByLogin(@RequestParam("login") String login){
-        return ResponseEntity.ok(userService.getUserByLogin(login));
+    public HttpEntity<String> getUserByLogin(@RequestParam("login") String login){
+        return ResponseEntity.ok(Mono.just(userService.getUserByLogin(login))
+                .map(updatedUser -> updatedUser.toString())
+                .block());
     }
 
     @PutMapping
     @ApiOperation(value = "Update User", notes = "Update user into user-service DB", response = User.class)
-    public HttpEntity<User> update(@RequestParam("user") User user) {
-        return ResponseEntity.ok(userService.updateUser(user));
+    public HttpEntity<String> update(@RequestParam("user") User user) {
+        return ResponseEntity.ok(Mono.just(userService.updateUser(user))
+                .map(updatedUser -> updatedUser.toString())
+                .block());
     }
 
     @DeleteMapping("/{userId}")
