@@ -1,11 +1,15 @@
 package com.gmail.kramarenko104.userservice.models;
 
+import com.oracle.javafx.jmx.json.JSONException;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.slf4j.LoggerFactory;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -66,8 +70,24 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "User{" +
-                "userId:" + user_id + ", " +
-                "login:'" + login + "', name:'" + name + "', roles: " + roles + "}";
+        return "{userId:" + user_id + ", login:" + login + ", name:" + name + ", roles: " + roles.toString() + "}";
+    }
+
+    public JSONObject toJSON() {
+        JSONObject jsonObject = new JSONObject();
+        JSONArray rolesArr = new JSONArray();
+        try {
+            jsonObject.put("userId", user_id);
+            jsonObject.put("login", login);
+            jsonObject.put("name", name);
+            Thread.dumpStack();
+            for (Role role : roles) {
+                rolesArr.put(role.getName());
+            }
+            jsonObject.put("roles", rolesArr);
+        } catch (JSONException err) {
+            LoggerFactory.getLogger(User.class).info("JSONException", err.toString());
+        }
+        return jsonObject;
     }
 }

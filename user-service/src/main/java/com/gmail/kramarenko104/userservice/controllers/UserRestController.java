@@ -9,9 +9,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -27,26 +24,23 @@ public class UserRestController {
 
     @GetMapping()
     @ApiOperation(value = "Get All Users", notes = "Get all users from user-service DB", tags = "getAllUsers", response = User.class)
-    public List<String> getAllUsers(){
-        return (List<String>)((List)userService.getAllUsers())
-                .stream()
-                .map(user -> user.toString())
-                .collect(Collectors.toList());
+    public HttpEntity<String> getAllUsers(){
+        String foundUsers = userService.getAllUsersJSON();
+        return ResponseEntity.ok(foundUsers == null ? "there aren't any users" : foundUsers);
     }
 
     @PostMapping()
     @ApiOperation(value = "Create The New User", notes = "Add the new user to user-service DB", response = User.class)
     public HttpEntity<String> createUser(@RequestParam("user") User user){
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(userService.createUser(user).toString());
+                .body(userService.createUser(user).toJSON().toString());
     }
 
     @GetMapping("/{userId}")
     @ApiOperation(value = "Get User by userId", notes = "Get user by userId from user-service DB", response = User.class)
     public HttpEntity<String> getUser(@PathVariable("userId") long userId){
-        return ResponseEntity.ok(Mono.just(userService.getUser(userId))
-                                    .map(user -> user.toString())
-                                    .block());
+        User foundUser = userService.getUser(userId);
+        return ResponseEntity.ok(foundUser == null ? "there isn't such user" : foundUser.toJSON().toString());
     }
 
     @GetMapping("/api/{userId}")
@@ -57,17 +51,14 @@ public class UserRestController {
     @GetMapping(params = {"login"})
     @ApiOperation(value = "Get User by login", notes = "Get user by login from user-service DB", response = User.class)
     public HttpEntity<String> getUserByLogin(@RequestParam("login") String login){
-        return ResponseEntity.ok(Mono.just(userService.getUserByLogin(login))
-                .map(updatedUser -> updatedUser.toString())
-                .block());
+        User foundUser = userService.getUserByLogin(login);
+        return ResponseEntity.ok(foundUser == null ? "there isn't user with such login" : foundUser.toJSON().toString());
     }
 
     @PutMapping
     @ApiOperation(value = "Update User", notes = "Update user into user-service DB", response = User.class)
     public HttpEntity<String> update(@RequestParam("user") User user) {
-        return ResponseEntity.ok(Mono.just(userService.updateUser(user))
-                .map(updatedUser -> updatedUser.toString())
-                .block());
+        return ResponseEntity.ok(userService.updateUser(user).toJSON().toString());
     }
 
     @DeleteMapping("/{userId}")

@@ -2,6 +2,7 @@ package com.gmail.kramarenko104.userservice.services;
 
 import com.gmail.kramarenko104.userservice.models.User;
 import com.gmail.kramarenko104.userservice.repositories.UserRepo;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigInteger;
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser(long id){
-        return (userRepo.findById(id).orElse(null));
+        return userRepo.findById(id).orElse(null);
     }
 
     @Override
@@ -54,6 +55,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAllUsers(){
         return (List) userRepo.findAll();
+    }
+
+    @Override
+    public String getAllUsersJSON(){
+        List<User> users =  (List) userRepo.findAll();
+        JSONArray usersArr = new JSONArray();
+        if (users != null) {
+            for (User user : users) {
+                usersArr.put(user.toJSON());
+            }
+        }
+        return usersArr.toString();
     }
 
     private String hashString(String hash) {
