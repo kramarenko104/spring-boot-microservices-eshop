@@ -5,10 +5,11 @@ import com.gmail.kramarenko104.userservice.services.UserServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -24,47 +25,55 @@ public class UserRestController {
 
     @GetMapping()
     @ApiOperation(value = "Get All Users", notes = "Get all users from user-service DB", tags = "getAllUsers", response = User.class)
-    public HttpEntity<String> getAllUsers(){
-        String foundUsers = userService.getAllUsersJSON();
-        return ResponseEntity.ok(foundUsers == null ? "there aren't any users" : foundUsers);
+    public ResponseEntity<String> getAllUsersJSON(){
+        return userService.getAllUsersJSON()
+                .map(foundUsers -> ResponseEntity.ok(foundUsers))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping()
     @ApiOperation(value = "Create The New User", notes = "Add the new user to user-service DB", response = User.class)
-    public HttpEntity<String> createUser(@RequestParam("user") User user){
+    public ResponseEntity<String> createUser(@RequestParam("user") User user){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userService.createUser(user).toJSON().toString());
     }
 
     @GetMapping("/{userId}")
     @ApiOperation(value = "Get User by userId", notes = "Get user by userId from user-service DB", response = User.class)
-    public HttpEntity<String> getUser(@PathVariable("userId") long userId){
-        User foundUser = userService.getUser(userId);
-        return ResponseEntity.ok(foundUser == null ? "there isn't such user" : foundUser.toJSON().toString());
-    }
-
-    @GetMapping("/api/{userId}")
-    public User getUserAPI(@PathVariable("userId") long userId){
-        return userService.getUser(userId);
+    public ResponseEntity<String> getUser(@PathVariable("userId") long userId){
+        return userService.getUser(userId)
+                .map(foundUser -> ResponseEntity.ok(foundUser.toJSON().toString()))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping(params = {"login"})
     @ApiOperation(value = "Get User by login", notes = "Get user by login from user-service DB", response = User.class)
-    public HttpEntity<String> getUserByLogin(@RequestParam("login") String login){
-        User foundUser = userService.getUserByLogin(login);
-        return ResponseEntity.ok(foundUser == null ? "there isn't user with such login" : foundUser.toJSON().toString());
+    public ResponseEntity<String> getUserByLogin(@RequestParam("login") String login){
+        return userService.getUserByLogin(login)
+                .map(foundUser -> ResponseEntity.ok(foundUser.toJSON().toString()))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping
     @ApiOperation(value = "Update User", notes = "Update user into user-service DB", response = User.class)
-    public HttpEntity<String> update(@RequestParam("user") User user) {
+    public ResponseEntity<String> update(@RequestParam("user") User user) {
         return ResponseEntity.ok(userService.updateUser(user).toJSON().toString());
     }
 
     @DeleteMapping("/{userId}")
     @ApiOperation(value = "Delete User by userId", notes = "Delete user by userId from user-service DB")
-    public HttpStatus deleteUser(@PathVariable("userId") long userId){
+    public ResponseEntity<String> deleteUser(@PathVariable("userId") long userId){
         userService.deleteUser(userId);
-        return HttpStatus.OK;
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/api/{userId}")
+    public Optional<User> getUserAPI(@PathVariable("userId") long userId){
+        return userService.getUser(userId);
+    }
+
+    @GetMapping("/api")
+    public Optional<List<User>> getAllUsers(){
+        return userService.getAllUsers();
     }
 }

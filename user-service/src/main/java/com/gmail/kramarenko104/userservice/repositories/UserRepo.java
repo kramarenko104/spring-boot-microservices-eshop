@@ -5,10 +5,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import java.util.Optional;
 
 public interface UserRepo extends CrudRepository <User, Long> {
 
-    User findByLogin(String login);
+    Optional<User> findByLogin(String login);
 
     @Modifying
     @Query("update User u set u.login = :login, u.password = :password, u.name= :name, u.address = :address, " +

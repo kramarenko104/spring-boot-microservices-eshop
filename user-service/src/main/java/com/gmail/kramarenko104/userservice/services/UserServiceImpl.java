@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -31,12 +32,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(long id){
-        return userRepo.findById(id).orElse(null);
+    public Optional<User> getUser(long id){
+        return userRepo.findById(id);
     }
 
     @Override
-    public User getUserByLogin(String login){
+    public Optional<User> getUserByLogin(String login){
         return userRepo.findByLogin(login);
     }
 
@@ -53,20 +54,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllUsers(){
-        return (List) userRepo.findAll();
+    public Optional<List<User>> getAllUsers(){
+        return Optional.of((List) userRepo.findAll());
     }
 
     @Override
-    public String getAllUsersJSON(){
-        List<User> users =  (List) userRepo.findAll();
+    public Optional<String> getAllUsersJSON(){
+        Iterable<User> users =  userRepo.findAll();
         JSONArray usersArr = new JSONArray();
         if (users != null) {
             for (User user : users) {
                 usersArr.put(user.toJSON());
             }
         }
-        return usersArr.toString();
+        return Optional.ofNullable(usersArr.isEmpty() ? null : usersArr.toString());
     }
 
     private String hashString(String hash) {

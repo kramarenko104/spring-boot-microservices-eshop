@@ -80,7 +80,6 @@ public class User implements Serializable {
             jsonObject.put("userId", user_id);
             jsonObject.put("login", login);
             jsonObject.put("name", name);
-            Thread.dumpStack();
             for (Role role : roles) {
                 rolesArr.put(role.getName());
             }
