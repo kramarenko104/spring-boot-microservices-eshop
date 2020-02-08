@@ -188,7 +188,8 @@ public class UserRestControllerTest {
 
     @Test
     public void testDeleteUserPassed() throws Exception {
-        doNothing().when(mockedUserService).deleteUser(1);
+        doReturn(Optional.of(mockedUser)).when(mockedUserService).getUser(1);
+        doReturn(true).when(mockedUserService).deleteUser(1);
 
         // Execute the GET request
         mockMvc.perform(delete("/users/{id}", 1))
@@ -200,15 +201,17 @@ public class UserRestControllerTest {
     }
 
     @Test
-    public void testDeleteUserFailed() throws Exception {
-        doNothing().when(mockedUserService).deleteUser(5);
+    public void testDeleteUserNotFound() throws Exception {
+
+        doReturn(Optional.empty()).when(mockedUserService).getUser(55);
+        doReturn(false).when(mockedUserService).deleteUser(55);
 
         // Execute the GET request
-        mockMvc.perform(delete("/users/{id}", 5))
+        mockMvc.perform(delete("/users/{id}", 55))
                 // validate the response code and content type
-                .andExpect(status().isOk());
+                .andExpect(status().isNotFound());
 
-        verify(mockedUserService, times(1)).deleteUser(5);
+        verify(mockedUserService, times(1)).deleteUser(55);
         verifyNoMoreInteractions(mockedUserService);
     }
 

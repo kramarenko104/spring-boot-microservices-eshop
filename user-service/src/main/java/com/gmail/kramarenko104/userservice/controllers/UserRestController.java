@@ -67,8 +67,7 @@ public class UserRestController {
     @DeleteMapping("/{userId}")
     @ApiOperation(value = "Delete User by userId", notes = "Delete user by userId from user-service DB")
     public ResponseEntity<String> deleteUser(@PathVariable("userId") long userId){
-        userService.deleteUser(userId);
-        return ResponseEntity.ok().build();
+        return (userService.deleteUser(userId)) ? ResponseEntity.ok().build() :  ResponseEntity.notFound().build();
     }
 
     @GetMapping("/api/{userId}")
