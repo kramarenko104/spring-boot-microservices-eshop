@@ -56,10 +56,12 @@ public class UserRestController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping
+    @PutMapping("/{userId}")
     @ApiOperation(value = "Update User", notes = "Update user into user-service DB", response = User.class)
-    public ResponseEntity<UserDTO> update(@RequestParam("user") User user) {
-        return ResponseEntity.ok(userService.updateUser(user));
+    public ResponseEntity<HttpStatus> updateUser(@PathVariable("userId") long userId,
+                                          @RequestBody User user) {
+        return ((userService.updateUser(userId, user) != 0) ?
+                ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @DeleteMapping("/{userId}")

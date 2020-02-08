@@ -13,7 +13,7 @@ public interface UserService {
 
     Optional<UserDTO> getUserByLogin(String login);
 
-    UserDTO updateUser(User user);
+    int updateUser(Long id, User user);
 
     void deleteUser(long id);
 

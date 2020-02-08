@@ -213,6 +213,57 @@ public class UserRestControllerTest {
     }
 
     @Test
-    public void update() {
+    public void testUpdateUserPassed() throws Exception {
+        User updateUser = new User();
+        updateUser.setUser_id(1L);
+        updateUser.setLogin("test@test.com");
+        updateUser.setName("updated name");
+        updateUser.setAddress("updated address");
+        Set<RoleEnum> roles = new HashSet<>();
+        roles.add(RoleEnum.ROLE_ADMIN);
+        updateUser.setRoles(roles);
+        UserDTO updatedMockedUser = updateUser.createDTO();
+
+        doReturn(Optional.of(updatedMockedUser)).when(mockedUserService).getUser(1L);
+        doReturn(1).when(mockedUserService).updateUser(1L, updateUser);
+
+        // Execute the PUT request
+        mockMvc.perform(put("/users/{id}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new JSONObject(updateUser).toString()))
+                .andDo(MockMvcResultHandlers.print())
+
+                // validate the returned body:
+                .andExpect(status().isOk());
+
+        verify(mockedUserService, times(1)).updateUser(1L, updateUser);
+        verifyNoMoreInteractions(mockedUserService);
+    }
+
+    @Test
+    public void testUpdateUserFailed() throws Exception {
+        User updateUser = new User();
+        updateUser.setUser_id(5L);
+        updateUser.setLogin("test@test.com");
+        updateUser.setName("updated name");
+        updateUser.setAddress("updated address");
+        Set<RoleEnum> roles = new HashSet<>();
+        roles.add(RoleEnum.ROLE_ADMIN);
+        updateUser.setRoles(roles);
+
+        doReturn(Optional.ofNullable(null)).when(mockedUserService).getUser(5L);
+        doReturn(0).when(mockedUserService).updateUser(5L, updateUser);
+
+        // Execute the PUT request
+        mockMvc.perform(put("/users/{id}", 5)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new JSONObject(updateUser).toString()))
+                .andDo(MockMvcResultHandlers.print())
+
+                // validate the returned body:
+                .andExpect(status().isNotFound());
+
+        verify(mockedUserService, times(1)).updateUser(5L, updateUser);
+        verifyNoMoreInteractions(mockedUserService);
     }
 }

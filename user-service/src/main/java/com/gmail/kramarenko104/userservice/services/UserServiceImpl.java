@@ -47,12 +47,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateUser(User newUser) {
+    public int updateUser(Long user_Id, User newUser) {
         return userRepo.updateUser(newUser.getLogin(),
-                newUser.getPassword(), newUser.getName(),
-                newUser.getAddress(), newUser.getComment(),
-                newUser.getUser_id())
-                    .createDTO();
+                newUser.getName(), newUser.getAddress(),
+                newUser.getComment(), newUser.getUser_id());
     }
 
     @Override
