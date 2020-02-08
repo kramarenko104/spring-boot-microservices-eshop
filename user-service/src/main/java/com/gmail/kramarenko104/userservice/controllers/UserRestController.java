@@ -34,7 +34,7 @@ public class UserRestController {
 
     @PostMapping()
     @ApiOperation(value = "Create The New User", notes = "Add the new user to user-service DB", response = User.class)
-    public ResponseEntity<UserDTO> createUser(@RequestParam("user") User user){
+    public ResponseEntity<UserDTO> createUser(@RequestBody User user){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userService.createUser(user));
     }

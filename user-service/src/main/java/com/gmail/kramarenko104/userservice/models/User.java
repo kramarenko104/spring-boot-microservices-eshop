@@ -65,11 +65,17 @@ public class User implements Serializable {
     @Column(name = "role")
     private Set<RoleEnum> roles;
 
-    public UserDTO getDTO(){
+    @Override
+    public String toString() {
+        return createDTO().toString();
+    }
+
+    public UserDTO createDTO(){
         UserDTO userDTO = new UserDTO();
         userDTO.setUser_id(this.user_id);
         userDTO.setLogin(this.login);
         userDTO.setName(this.name);
+        userDTO.setAddress(this.address);
         userDTO.setRoles(this.roles);
         return userDTO;
     }

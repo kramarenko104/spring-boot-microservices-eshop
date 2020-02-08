@@ -29,20 +29,20 @@ public class UserServiceImpl implements UserService {
     public UserDTO createUser(User user){
         User criptUser = user;
         criptUser.setPassword(hashString(user.getPassword()));
-        return userRepo.save(criptUser).getDTO();
+        return userRepo.save(criptUser).createDTO();
     }
 
     @Override
     public Optional<UserDTO> getUser(long id){
         return userRepo.findById(id)
-                .map(u -> Optional.ofNullable(u.getDTO()))
+                .map(u -> Optional.ofNullable(u.createDTO()))
                 .orElse(Optional.ofNullable(null));
     }
 
     @Override
     public Optional<UserDTO> getUserByLogin(String login){
         return userRepo.findByLogin(login)
-                .map(u -> Optional.ofNullable(u.getDTO()))
+                .map(u -> Optional.ofNullable(u.createDTO()))
                 .orElse(Optional.ofNullable(null));
     }
 
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
                 newUser.getPassword(), newUser.getName(),
                 newUser.getAddress(), newUser.getComment(),
                 newUser.getUser_id())
-                    .getDTO();
+                    .createDTO();
     }
 
     @Override
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
         if (users != null) {
             usersDTO = new ArrayList<>();
             for (User user : users) {
-                usersDTO.add(user.getDTO());
+                usersDTO.add(user.createDTO());
             }
         }
         return Optional.ofNullable(usersDTO);
