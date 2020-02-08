@@ -12,22 +12,17 @@ CREATE TABLE IF NOT EXISTS users
 ) 
 ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS roles
-(
-  role_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(50) default 'ROLE_USER' NOT NULL
-) 
-ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS user_roles
 (
-  user_id INT NOT NULL,
-  role_id INT NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES users (user_id),
-  FOREIGN KEY (role_id) REFERENCES roles (role_id),
-  UNIQUE (user_id, role_id)
+    user_id INT NOT NULL,
+    role VARCHAR(10) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (user_id),
+    UNIQUE (user_id, role)
 )
-ENGINE = InnoDB;
+    ENGINE = InnoDB;
+
+
 
 CREATE TABLE IF NOT EXISTS products
 (

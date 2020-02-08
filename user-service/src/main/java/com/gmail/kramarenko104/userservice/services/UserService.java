@@ -1,23 +1,22 @@
 package com.gmail.kramarenko104.userservice.services;
 
 import com.gmail.kramarenko104.userservice.models.User;
+import com.gmail.kramarenko104.userservice.models.UserDTO;
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
 
-    User createUser(User user);
+    UserDTO createUser(User user);
 
-    Optional<User> getUser(long id);
+    Optional<UserDTO> getUser(long id);
 
-    Optional<User> getUserByLogin(String login);
+    Optional<UserDTO> getUserByLogin(String login);
 
-    User updateUser(User user);
+    UserDTO updateUser(User user);
 
     void deleteUser(long id);
 
-    Optional<List<User>> getAllUsers();
-
-    Optional<String> getAllUsersJSON();
+    Optional<List<UserDTO>> getAllUsers();
 
 }

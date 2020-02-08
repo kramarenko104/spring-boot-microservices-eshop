@@ -4,9 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -27,7 +25,6 @@ public class User implements Serializable {
 
     @Column(unique = true, nullable = false, columnDefinition = "varchar(30)")
     @NotNull
-    @Email
     private String login;
 
     @Column(nullable = false, columnDefinition = "varchar(50)")

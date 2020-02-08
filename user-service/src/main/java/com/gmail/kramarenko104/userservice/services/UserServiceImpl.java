@@ -1,14 +1,15 @@
 package com.gmail.kramarenko104.userservice.services;
 
 import com.gmail.kramarenko104.userservice.models.User;
+import com.gmail.kramarenko104.userservice.models.UserDTO;
 import com.gmail.kramarenko104.userservice.repositories.UserRepo;
-import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,27 +26,33 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(User user){
+    public UserDTO createUser(User user){
         User criptUser = user;
         criptUser.setPassword(hashString(user.getPassword()));
-        return userRepo.save(criptUser);
+        return userRepo.save(criptUser).getDTO();
     }
 
     @Override
-    public Optional<User> getUser(long id){
-        return userRepo.findById(id);
+    public Optional<UserDTO> getUser(long id){
+        return userRepo.findById(id)
+                .map(u -> Optional.ofNullable(u.getDTO()))
+                .orElse(Optional.ofNullable(null));
     }
 
     @Override
-    public Optional<User> getUserByLogin(String login){
-        return userRepo.findByLogin(login);
+    public Optional<UserDTO> getUserByLogin(String login){
+        return userRepo.findByLogin(login)
+                .map(u -> Optional.ofNullable(u.getDTO()))
+                .orElse(Optional.ofNullable(null));
     }
 
     @Override
-    public User updateUser(User newUser) {
+    public UserDTO updateUser(User newUser) {
         return userRepo.updateUser(newUser.getLogin(),
                 newUser.getPassword(), newUser.getName(),
-                newUser.getAddress(), newUser.getComment(), newUser.getUser_id());
+                newUser.getAddress(), newUser.getComment(),
+                newUser.getUser_id())
+                    .getDTO();
     }
 
     @Override
@@ -54,20 +61,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<List<User>> getAllUsers(){
-        return Optional.of((List) userRepo.findAll());
-    }
-
-    @Override
-    public Optional<String> getAllUsersJSON(){
-        Iterable<User> users =  userRepo.findAll();
-        JSONArray usersArr = new JSONArray();
+    public Optional<List<UserDTO>> getAllUsers(){
+        List<User> users = (List) userRepo.findAll();
+        List<UserDTO> usersDTO = null;
         if (users != null) {
+            usersDTO = new ArrayList<>();
             for (User user : users) {
-                usersArr.put(user.toJSON());
+                usersDTO.add(user.getDTO());
             }
         }
-        return Optional.ofNullable(usersArr.isEmpty() ? null : usersArr.toString());
+        return Optional.ofNullable(usersDTO);
     }
 
     private String hashString(String hash) {

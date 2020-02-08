@@ -1,6 +1,7 @@
 package com.gmail.kramarenko104.userservice.controllers;
 
 import com.gmail.kramarenko104.userservice.models.User;
+import com.gmail.kramarenko104.userservice.models.UserDTO;
 import com.gmail.kramarenko104.userservice.services.UserServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,39 +26,40 @@ public class UserRestController {
 
     @GetMapping()
     @ApiOperation(value = "Get All Users", notes = "Get all users from user-service DB", tags = "getAllUsers", response = User.class)
-    public ResponseEntity<String> getAllUsersJSON(){
-        return userService.getAllUsersJSON()
+    public ResponseEntity<List<UserDTO>> getAllUsers(){
+        return userService.getAllUsers()
                 .map(foundUsers -> ResponseEntity.ok(foundUsers))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping()
     @ApiOperation(value = "Create The New User", notes = "Add the new user to user-service DB", response = User.class)
-    public ResponseEntity<String> createUser(@RequestParam("user") User user){
+    public ResponseEntity<UserDTO> createUser(@RequestParam("user") User user){
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(userService.createUser(user).toJSON().toString());
+                .body(userService.createUser(user));
     }
 
     @GetMapping("/{userId}")
     @ApiOperation(value = "Get User by userId", notes = "Get user by userId from user-service DB", response = User.class)
-    public ResponseEntity<String> getUser(@PathVariable("userId") long userId){
-        return userService.getUser(userId)
-                .map(foundUser -> ResponseEntity.ok(foundUser.toJSON().toString()))
+    public ResponseEntity<UserDTO> getUser(@PathVariable("userId") long userId){
+        Optional<UserDTO> user = userService.getUser(userId);
+        return user
+                .map(foundUser -> ResponseEntity.ok(foundUser))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping(params = {"login"})
     @ApiOperation(value = "Get User by login", notes = "Get user by login from user-service DB", response = User.class)
-    public ResponseEntity<String> getUserByLogin(@RequestParam("login") String login){
+    public ResponseEntity<UserDTO> getUserByLogin(@RequestParam("login") String login){
         return userService.getUserByLogin(login)
-                .map(foundUser -> ResponseEntity.ok(foundUser.toJSON().toString()))
+                .map(foundUser -> ResponseEntity.ok(foundUser))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping
     @ApiOperation(value = "Update User", notes = "Update user into user-service DB", response = User.class)
-    public ResponseEntity<String> update(@RequestParam("user") User user) {
-        return ResponseEntity.ok(userService.updateUser(user).toJSON().toString());
+    public ResponseEntity<UserDTO> update(@RequestParam("user") User user) {
+        return ResponseEntity.ok(userService.updateUser(user));
     }
 
     @DeleteMapping("/{userId}")
@@ -68,12 +70,12 @@ public class UserRestController {
     }
 
     @GetMapping("/api/{userId}")
-    public Optional<User> getUserAPI(@PathVariable("userId") long userId){
+    public Optional<UserDTO> getUserAPI(@PathVariable("userId") long userId){
         return userService.getUser(userId);
     }
 
     @GetMapping("/api")
-    public Optional<List<User>> getAllUsers(){
+    public Optional<List<UserDTO>> getAllUsersAPI(){
         return userService.getAllUsers();
     }
 }

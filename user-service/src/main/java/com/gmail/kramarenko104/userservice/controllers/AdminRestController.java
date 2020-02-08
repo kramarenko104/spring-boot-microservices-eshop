@@ -1,5 +1,6 @@
 package com.gmail.kramarenko104.userservice.controllers;
 
+import com.gmail.kramarenko104.userservice.models.UserDTO;
 import com.gmail.kramarenko104.userservice.repositories.ProductClient;
 import com.gmail.kramarenko104.userservice.services.UserServiceImpl;
 import io.swagger.annotations.ApiOperation;
@@ -34,8 +35,8 @@ public class AdminRestController {
 
     @GetMapping("/users")
     @ApiOperation(value = "Get All Users", notes = "Get All Users (for admins only)", response = String.class)
-    public HttpEntity<String> getAllUsersJSON(){
-        return userService.getAllUsersJSON()
+    public ResponseEntity<List<UserDTO>> getAllUsers(){
+        return userService.getAllUsers()
                 .map(foundUsers -> ResponseEntity.ok(foundUsers))
                 .orElse(ResponseEntity.notFound().build());
     }
